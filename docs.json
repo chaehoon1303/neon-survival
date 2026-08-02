@@ -1,0 +1,34 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "maple",
+  "name": "NEON SURVIVOR",
+  "description": "NEON SURVIVOR 게임 및 개발 문서",
+  "colors": {
+    "primary": "#20D9FF",
+    "light": "#76EAFF",
+    "dark": "#0798C8"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "시작하기",
+        "pages": ["docs/index", "docs/quickstart"]
+      },
+      {
+        "group": "개발",
+        "pages": ["docs/architecture", "docs/development", "docs/persistence"]
+      },
+      {
+        "group": "도구",
+        "pages": ["docs/tooling/mintlify", "docs/tooling/graphify"]
+      },
+      {
+        "group": "게임 디자인",
+        "pages": ["docs/gameplay"]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {}
+  }
+}

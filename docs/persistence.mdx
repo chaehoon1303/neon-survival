@@ -1,0 +1,28 @@
+---
+title: "저장 데이터"
+description: "브라우저 localStorage 키와 호환성 규칙입니다."
+icon: "database"
+---
+
+게임 진행은 브라우저의 `localStorage`에 저장된다. 서버 계정이나 클라우드 동기화는 없다.
+
+| 키 | 값 | 소유 시스템 |
+| --- | --- | --- |
+| `neonCoins` | 숫자 | 코인 지갑 |
+| `neonUnlocked` | 숫자 | 열린 맵 인덱스 |
+| `neonInventory` | JSON 배열 | 보유 장비 |
+| `neonEquipped` | JSON 객체 | 슬롯별 장착 장비 |
+| `neonQuests` | JSON 객체 | 퀘스트와 갱신 시각 |
+| `neonBossCodex` | JSON | 보스 도감 |
+| `neonRiftArchives` | JSON | 균열 기록 |
+| `neonBaseRestored` | 숫자 | 기지 복구 진행도 |
+| `neonBaseUpgrades` | JSON 객체 | 시설 레벨 |
+| `neonBaseLoadout` | JSON 배열 | 활성 시설 ID |
+| `neonMode` | 문자열 | 선택한 전투 모드 |
+| `neonEndlessBest` | 숫자 | 무한 모드 최고 기록 |
+
+## 호환성 규칙
+
+키 이름이나 값의 형태를 즉시 바꾸지 않는다. 스키마 변경이 필요하면 기존 값을 읽어 새 형태로 변환하는 일회성 마이그레이션을 먼저 추가하고, 변환 실패 시 안전한 기본값을 사용한다.
+
+개발자 도구에서 사이트 데이터를 지우면 진행도가 초기화된다. 테스트 전에 필요한 저장값을 별도로 백업한다.

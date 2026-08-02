@@ -3,6 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev": "python3 -m http.server 8080",
+    "check:js": "node --check game.js && node --check base.js && node --check modes.js",
+    "docs:check": "node scripts/check-docs.mjs",
+    "docs:dev": "npx mint dev",
+    "graph:build": "uvx --cache-dir .tooling/uv-cache --from graphifyy graphify extract . --code-only && uvx --cache-dir .tooling/uv-cache --from graphifyy graphify cluster-only . --no-label",
+    "graph:update": "uvx --cache-dir .tooling/uv-cache --from graphifyy graphify update .",
+    "check": "npm run check:js && npm run docs:check",
     "ios:sync": "cap sync ios",
     "ios:open": "cap open ios"
   },

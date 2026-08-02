@@ -1,0 +1,30 @@
+---
+title: "Mintlify"
+description: "개발 문서를 로컬에서 미리 보고 유지하는 방법입니다."
+icon: "book-open"
+---
+
+Mintlify 설정은 저장소 루트의 `docs.json`에 있고 문서 페이지는 `docs/**/*.mdx`에 있다.
+
+## 로컬 미리보기
+
+```bash
+npm run docs:dev
+```
+
+처음 실행하는 환경에서는 `npx`가 Mintlify CLI(`mint`)를 내려받을 수 있으므로 네트워크 연결이 필요하다.
+
+## 문서 검사
+
+```bash
+npm run docs:check
+```
+
+검사는 다음을 확인한다.
+
+- `docs.json` JSON 문법과 필수 필드
+- 내비게이션에 등록된 페이지 존재 여부
+- 문서 안의 `/docs/...` 내부 링크 대상
+- 모든 MDX 페이지의 `title` 프런트매터
+
+새 페이지를 추가하면 `docs.json` 내비게이션에도 등록한다. 코드 구조, 저장 키, 실행 명령이 바뀌면 관련 문서를 같은 변경에서 갱신한다.
