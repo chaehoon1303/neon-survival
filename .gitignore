@@ -1,0 +1,12 @@
+# Local dependency/tool runtimes
+node_modules/
+.tooling/
+
+# System/editor files
+.DS_Store
+.vscode/
+
+# Capacitor generated native projects and build outputs
+ios/
+android/
+dist/

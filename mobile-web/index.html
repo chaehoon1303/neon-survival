@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEON SURVIVOR</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="game-shell">
+    <canvas id="game" width="1280" height="720"></canvas>
+    <section id="menu" class="screen home">
+      <button id="settings-button" class="icon-button">⚙</button>
+      <div class="title"><p>NEON ROGUELITE</p><h1>NEON<br><span>SURVIVOR</span></h1><small>끝없는 적을 뚫고 지역을 정복하세요.</small></div>
+      <div class="map-nav"><button id="map-prev" class="map-arrow">‹</button><div id="map-picker" class="map-picker"></div><button id="map-next" class="map-arrow">›</button></div>
+      <button id="play-button" class="play-button">▶&nbsp; 플레이</button>
+      <div class="mode-tabs"><button disabled>🔒</button><button id="equipment-button">🎒<small>장비</small></button><button id="battle-tab" class="battle-tab">⚔<small>전투</small></button><button id="crate-button">📦<small>상자</small></button><button disabled>🔒</button></div><button id="quest-button" class="quest-button">📜<small>퀘스트</small></button><div id="coin-wallet" class="coin-wallet">🪙 0</div>
+      <div id="settings" class="panel hidden"><b>설정</b><label>BGM 볼륨 <input id="sound" type="range" min="0" max="100" value="60"></label><small>이동: WASD · 장착 무기 자동 공격</small></div>
+    </section>
+    <section id="upgrade" class="screen hidden"><p class="label">LEVEL UP!</p><h2>강화 하나를 선택하세요</h2><div id="upgrade-list" class="upgrade-list"></div><p id="evolution-hint" class="evolution-hint"></p></section>
+    <section id="stage-event" class="screen hidden stage-event"><p class="label">ROUTE CHOICE</p><h2>다음 구역을 선택하세요</h2><p>안전을 택할지, 더 큰 보상을 위해 위험을 감수할지 선택합니다.</p><div class="route-options"><button id="route-safe"><b>🛡 안전 보급소</b><small>체력 35% 회복<br>일반 난이도</small></button><button id="route-elite"><b>⚠ 정예 도전</b><small>다음 스테이지 적 강화<br>클리어 시 보너스 코인 +20</small></button></div></section>
+    <section id="result" class="screen hidden"><p id="result-label" class="label">RUN OVER</p><h2 id="result-title">생존 실패</h2><p id="result-detail"></p><div class="result-actions"><button id="retry-button">↻ 다시 하기</button><button id="menu-button" class="gold">메뉴 화면</button></div></section>
+    <section id="shop" class="screen hidden modal-screen crate-screen"><button class="close" data-close="shop">←</button><p class="label">SUPPLY CRATE</p><h2>상자 개봉</h2><p>무기 또는 장비 상자 · 100 코인</p><div class="shop-actions"><button id="buy-weapon">⚔ 무기 상자<br><small>100 🪙</small></button><button id="buy-armor">🛡 장비 상자<br><small>100 🪙</small></button></div><div class="probability"><b>등급 확률</b><span class="common">일반 58%</span><span class="rare">희귀 25%</span><span class="hero">영웅 11%</span><span class="legend">전설 5%</span><span class="mythic">신화 1%</span></div><div id="shop-result" class="loot-result">상자를 열어 보상을 확인하세요.</div></section>
+    <section id="equipment" class="screen hidden modal-screen"><button class="close" data-close="equipment">×</button><p class="label">LOADOUT</p><h2>장비</h2><div class="loadout"><div id="slot-weapon" class="slot" data-slot="weapon">무기</div><div id="slot-armor" class="slot" data-slot="armor">갑옷</div><div id="slot-gloves" class="slot" data-slot="gloves">장갑</div><div class="player-card">◉<small>PLAYER</small></div><div id="slot-shoes" class="slot" data-slot="shoes">신발</div><div id="slot-belt" class="slot" data-slot="belt">벨트</div><div id="slot-necklace" class="slot" data-slot="necklace">목걸이</div></div><button id="forge-button" class="forge-button">🔨 합성</button><div class="inventory-heading"><h3>보유 장비</h3><select id="inventory-sort" aria-label="보유 장비 정렬"><option value="tier-desc">높은 등급순</option><option value="tier-asc">낮은 등급순</option><option value="recent">최근 획득순</option><option value="oldest">오래된 획득순</option><option value="grouped">같은 장비 묶기</option></select></div><div id="inventory" class="inventory"></div></section>
+    <section id="forge" class="screen hidden modal-screen forge-screen"><button id="forge-back" class="close">←</button><p class="label">BLACKSMITH</p><h2>장비 합성</h2><div class="blacksmith-scene"><span>🧔</span><i>🔥</i><b>⚒️</b></div><p>같은 장비 5개를 모아 상위 등급으로 합성하세요.</p><div id="forge-list" class="forge-list"></div></section>
+    <section id="quests" class="screen hidden modal-screen quest-screen"><button class="close" data-close="quests">×</button><p class="label">DAILY OPS</p><h2>랜덤 퀘스트</h2><p>다음 갱신까지 <b id="quest-reset">05:00</b></p><div id="quest-list" class="quest-list"></div></section>
+    <div id="hud" class="hidden"><div class="top"><div><b id="map-name">1. 훈련 구역</b><small id="kill-count">처치 0</small></div><div id="timer">00:00</div></div><div class="stage"><span id="stage-label">STAGE 1</span><div><i id="stage-bar"></i></div><b id="stage-text">0 / 12</b></div><div id="notice"></div><div class="hp"><span>HP <b id="hp-num">100</b></span><div><i id="hp-bar"></i></div></div><div class="xp"><div><i id="xp-bar"></i></div><span>LV. <b id="level">1</b></span></div><div id="touch-joystick" class="touch-joystick" aria-label="이동 조이스틱"><div id="touch-stick" class="touch-stick"></div></div><div id="crosshair"><i></i><i></i><i></i><i></i></div></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>

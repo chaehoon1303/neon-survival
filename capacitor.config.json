@@ -1,0 +1,8 @@
+{
+  "appId": "com.neonsurvivor.game",
+  "appName": "Neon Survivor",
+  "webDir": "mobile-web",
+  "server": {
+    "iosScheme": "capacitor"
+  }
+}
