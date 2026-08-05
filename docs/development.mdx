@@ -36,13 +36,57 @@ npm run check
 
 ## 모바일 동기화
 
-`capacitor.config.json`의 `webDir`은 `mobile-web`이다. 웹 원본 변경을 모바일 앱에도 출시하려면 대응하는 HTML/CSS/JavaScript와 에셋을 `mobile-web/`에 반영한 뒤 실행한다.
+`capacitor.config.json`의 `webDir`은 `mobile-web`이다. 웹 원본 변경을 모바일 앱에도 출시하려면 먼저 자동 동기화를 실행한다.
 
 ```bash
+npm run mobile:web-sync
 npm run ios:sync
 npm run ios:open
 ```
 
 <Note>
-  현재 저장소에는 자동 복사 빌드 단계가 없다. `mobile-web/`은 독립 스냅샷이므로 누락 여부를 리뷰해야 한다.
+  `npm run ios:sync`는 `mobile:web-sync`를 먼저 실행하므로 HTML, CSS, JavaScript, 서비스 워커와 `assets/`가 빠지지 않는다.
 </Note>
+
+### Android
+
+Android 프로젝트는 Capacitor 7의 `@capacitor/android`를 사용한다. Android Studio의 Setup Wizard 또는 SDK Manager에서 Android SDK Platform, Build-Tools, Platform-Tools, Emulator와 Command-line Tools를 먼저 설치한다.
+
+네이티브 앱은 `@capacitor/screen-orientation`으로 실행 시 `landscape` 방향을 잠근다. 플러그인을 추가하거나 버전을 바꾼 뒤에는 iOS와 Android를 다시 동기화한다.
+
+Gradle 빌드는 JDK 17~23을 사용하며 JDK 21을 권장한다. `scripts/android.mjs`는 `JAVA_HOME`과 macOS Homebrew JDK 21 경로를 확인해 호환되는 JDK를 자동 선택한다. Android Studio 2026에 포함된 JDK 25는 현재 Gradle 8.11과 호환되지 않으므로 빌드에 사용하지 않는다.
+
+새로 받은 저장소에서는 의존성을 설치한 뒤 Android 생성 프로젝트를 한 번 추가한다.
+
+```bash
+npm install
+npm run android:add
+```
+
+이미 `android/`가 있는 로컬 환경에서는 다시 `android:add`를 실행하지 말고 동기화나 빌드 명령을 사용한다.
+
+```bash
+npm run android:sync
+npm run android:build
+npm run android:open
+```
+
+USB 디버깅 또는 무선 디버깅으로 연결된 실제 휴대폰이나 준비된 에뮬레이터에서 바로 실행하려면 다음을 사용한다.
+
+```bash
+npm run android:run
+```
+
+`android/`는 Capacitor가 생성하는 네이티브 프로젝트이므로 직접 커밋하지 않는다. 웹 원본, `mobile-web/`, `capacitor.config.json`, `package.json`을 기준으로 필요할 때 다시 생성·동기화한다. SDK와 JDK는 머신별 로컬 도구이며 Git에 커밋하지 않는다.
+
+macOS에서 `android:open`은 한글이 포함된 저장소 경로를 Android Studio 런처가 잘못 해석하는 문제를 피하기 위해 영문 임시 작업 폴더에서 IDE를 실행한다. 실제 Android 프로젝트 위치는 바뀌지 않는다.
+
+## 웹 업데이트와 GitHub Pages
+
+게임은 실행할 때 CSS와 JavaScript에 새 캐시 키를 붙이고, HTTP/HTTPS에서는 네트워크 우선 서비스 워커를 등록한다. 따라서 이미 접속했던 기기도 페이지를 다시 열면 최신 배포 파일을 우선 요청한다.
+
+`main` 브랜치에 변경을 푸시하면 `.github/workflows/pages.yml`이 배포 전용 `_site/`를 만든 뒤 GitHub Pages에 자동 배포한다. 로컬 파일만 수정한 상태는 다른 기기에 전달되지 않으므로 공유 전에는 반드시 커밋과 푸시가 필요하다.
+
+```bash
+npm run pages:build
+```

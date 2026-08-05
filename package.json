@@ -4,18 +4,27 @@
   "private": true,
   "scripts": {
     "dev": "python3 -m http.server 8080",
-    "check:js": "node --check game.js && node --check base.js && node --check modes.js && node --check characters.js",
+    "check:js": "node --check game.js && node --check base.js && node --check modes.js && node --check characters.js && node --check orientation.js",
     "docs:check": "node scripts/check-docs.mjs",
     "docs:dev": "npx mint dev",
+    "mobile:web-sync": "node scripts/sync-mobile.mjs",
+    "pages:build": "node scripts/build-pages.mjs",
     "graph:build": "uvx --cache-dir .tooling/uv-cache --from graphifyy graphify extract . --code-only && uvx --cache-dir .tooling/uv-cache --from graphifyy graphify cluster-only . --no-label",
     "graph:update": "uvx --cache-dir .tooling/uv-cache --from graphifyy graphify update .",
-    "check": "npm run check:js && npm run docs:check",
-    "ios:sync": "cap sync ios",
-    "ios:open": "cap open ios"
+    "check": "npm run mobile:web-sync && npm run check:js && npm run docs:check",
+    "ios:sync": "npm run mobile:web-sync && DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer cap sync ios",
+    "ios:open": "cap open ios",
+    "android:add": "npm run mobile:web-sync && cap add android",
+    "android:sync": "npm run mobile:web-sync && cap sync android",
+    "android:build": "node scripts/android.mjs build",
+    "android:open": "node scripts/open-android.mjs",
+    "android:run": "node scripts/android.mjs run"
   },
   "dependencies": {
+    "@capacitor/android": "^7.6.8",
     "@capacitor/core": "^7.0.0",
-    "@capacitor/ios": "^7.0.0"
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/screen-orientation": "^7.0.4"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.0.0"
