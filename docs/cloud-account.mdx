@@ -1,0 +1,60 @@
+---
+title: "계정과 클라우드 저장"
+description: "게스트 진행도, Supabase 인증과 권한 있는 저장 API를 연결하는 방법입니다."
+icon: "cloud"
+---
+
+## 현재 동작
+
+게임은 첫 실행에 로그인 터미널을 표시하지만 `게스트로 시작`은 항상 사용할 수 있다. 게스트 진행도는 기존 `localStorage` 키를 그대로 사용하며 삭제하지 않는다.
+
+로그인/클라우드 저장은 `account-config.js`에 공개 설정이 입력된 경우에만 활성화된다. 빈 기본값에서는 OAuth 버튼이 비밀번호를 저장하거나 가짜 계정을 만들지 않으며, 게스트 진행도를 안전하게 유지한다.
+
+## 권장 구성
+
+- **Supabase Auth**: Google, Apple, 이메일 매직 링크 로그인과 안전한 세션
+- **권한 있는 Account API**: Supabase JWT를 검증하고 저장을 검증/병합하는 Cloudflare Worker 또는 같은 역할의 서버
+- **향후 협동 서버**: Durable Object/방 서버가 같은 Supabase `userId`를 검증해 파티와 전투 상태를 소유
+
+Supabase는 브라우저 세션을 유지하고 Google·Apple OAuth 및 이메일 매직 링크를 지원한다. Apple/Google 공급자는 각 공급자 콘솔과 Supabase 대시보드에서 redirect URL을 등록해야 한다. [Supabase Auth JavaScript](https://supabase.com/docs/reference/javascript/auth), [Google 로그인](https://supabase.com/docs/guides/auth/social-login/auth-google), [Apple 로그인](https://supabase.com/docs/guides/auth/social-login/auth-apple), [이메일 매직 링크](https://supabase.com/docs/guides/auth/auth-email-passwordless?language=js&queryGroups=language)
+
+## 공개 클라이언트 설정
+
+`account-config.js`에는 아래 세 항목만 넣는다.
+
+```js
+window.NEON_ACCOUNT_CONFIG = {
+  supabaseUrl: 'https://YOUR_PROJECT.supabase.co',
+  supabasePublishableKey: 'sb_publishable_...',
+  progressApiBase: 'https://account-api.example.com'
+};
+```
+
+`supabasePublishableKey`는 브라우저용 공개 키다. 서비스 역할 키, OAuth client secret, Apple private key, Cloudflare API token은 절대로 이 파일이나 GitHub Pages에 넣지 않는다.
+
+## Account API 계약
+
+클라이언트는 Supabase access token을 `Authorization: Bearer <token>`으로 보내며 API는 JWT의 `sub`를 계정 userId로 사용한다.
+
+| 요청 | 역할 |
+| --- | --- |
+| `GET /v1/progress` | 현재 userId의 최신 진행 스냅샷을 반환 |
+| `PUT /v1/progress` | `saveVersion`, `updatedAt`, 논리 그룹별 데이터를 검증·병합 후 저장 |
+
+서버는 아래를 반드시 수행한다.
+
+1. JWT 서명/만료 및 userId 검증
+2. 요청 본문의 허용 키·자료형·크기 제한
+3. 코인/보상/상자/전투 결과의 서버 권한 검증(협동 전투에서는 방 서버의 결과만 반영)
+4. `updatedAt`과 그룹별 병합으로 오래된 기기가 최신 데이터를 덮어쓰지 않도록 처리
+5. 원본/병합 결과에 감사 시각을 기록
+
+초기 스냅샷은 `profile`, `progress`, `inventory`, `characters`, `world`, `collection`, `settings` 그룹으로 분리한다. 기존 키는 migration 성공 뒤에도 즉시 삭제하지 않는다.
+
+## 테스트 순서
+
+1. 빈 브라우저에서 게스트로 시작해 장비/요원/코인을 획득한다.
+2. 계정을 연결하고 `이 데이터를 계정에 저장`을 눌러 업로드한다.
+3. 다른 브라우저에서 같은 계정으로 로그인해 진행도 병합을 확인한다.
+4. 인터넷을 끊고 진행 후 다시 연결해 `저장 중… → 저장 완료` 표기를 확인한다.
+5. 마지막으로 협동 방 서버가 같은 userId를 사용하도록 연결한다.

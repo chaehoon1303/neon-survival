@@ -4,7 +4,7 @@ description: "브라우저 localStorage 키와 호환성 규칙입니다."
 icon: "database"
 ---
 
-게임 진행은 브라우저의 `localStorage`에 저장된다. 서버 계정이나 클라우드 동기화는 없다.
+게임 진행은 우선 브라우저의 `localStorage`에 안전하게 저장된다. 계정 서버를 설정한 뒤에는 이 로컬 캐시와 클라우드 스냅샷을 함께 사용하며, 기존 키는 삭제하지 않는다.
 
 | 키 | 값 | 소유 시스템 |
 | --- | --- | --- |
@@ -44,6 +44,9 @@ icon: "database"
 | `neonCoreProgress` | JSON 객체 | NEON CORE 조각 진행도 |
 | `neonCoopServerUrl` | 문자열 | 권한 있는 협동 방 서버의 `wss://` 주소 (배포 후 설정) |
 | `neonCoopLastRoom` | 문자열 | 마지막으로 만든/참가한 협동 방 코드 |
+| `neonAccountSession` | JSON 객체 | 게스트 또는 정식 계정의 userId, 닉네임, 로그인 방식 (토큰 제외) |
+| `neonAccountSnapshot` | JSON 객체 | 마지막으로 서버에 저장한 논리 그룹형 진행 스냅샷 |
+| `neonAccountLastLocalChange` | 숫자 | 로컬 진행도가 마지막으로 변경된 시각 |
 
 ## 호환성 규칙
 
