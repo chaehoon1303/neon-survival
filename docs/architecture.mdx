@@ -19,6 +19,7 @@ flowchart LR
   ARSENAL --> UI["ui-depth.js / ui-depth.css · 게임형 UI 표현 레이어"]
   UI --> GEAR["gear-arsenal.js / gear-arsenal.css · 장비 아트·세트·전투 효과 확장"]
   GEAR --> LONG["longplay.js / longplay.css · 숙련도·유물·현상수배·장기 목표"]
+  LONG --> COOP["coop.js / coop.css · 5인 파티 로비·서버 프로토콜 기반"]
   ASSETS["assets/ · 이미지 시트"] --> CORE
   CORE --> STORAGE["localStorage · 영속 데이터"]
   MODES --> LOOP["Canvas + requestAnimationFrame"]
@@ -46,6 +47,7 @@ flowchart LR
 | `ui-depth.js`, `ui-depth.css` | 기능·저장 데이터와 분리된 2.5D 카드/버튼 반응, 화면 진입, 금속·유리·홀로그램 UI 표현 |
 | `gear-arsenal.js`, `gear-arsenal.css` | 기존 장비 저장 구조를 유지한 전용 장비 아트, 머리 모듈 슬롯, 장비 상세·강화 UI, 신규 장비/세트 및 전투 효과 |
 | `longplay.js`, `longplay.css` | 무기 숙련도/분기 진화, 유물, 오버드라이브, 보스 부위 파괴, 비밀 기록·히든 보스, 현상수배, 시즌 작전, NEON CORE 장기 목표 |
+| `coop.js`, `coop.css` | 모드 화면의 온라인 협동 카드, 5인 방 코드 파티 UI, 서버가 연결될 때 사용하는 준비·방 상태 메시지 계약과 인원별 밸런스 데이터 |
 | `mobile-web/` | Capacitor의 `webDir`이 가리키는 배포 스냅샷 |
 | `sw.js` | 웹 배포에서 최신 파일을 우선 요청하고 오프라인 시 캐시를 사용하는 서비스 워커 |
 | `scripts/sync-mobile.mjs` | 웹 원본과 에셋을 `mobile-web/`에 동기화 |

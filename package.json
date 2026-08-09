@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "python3 -m http.server 8080",
-    "check:js": "node --check game.js && node --check base.js && node --check modes.js && node --check characters.js && node --check orientation.js && node --check variety.js && node --check lobby.js && node --check battle-select.js && node --check player-level.js && node --check arsenal.js && node --check ui-depth.js && node --check gear-arsenal.js && node --check longplay.js",
+    "check:js": "node --check game.js && node --check base.js && node --check modes.js && node --check characters.js && node --check orientation.js && node --check variety.js && node --check lobby.js && node --check battle-select.js && node --check player-level.js && node --check arsenal.js && node --check ui-depth.js && node --check gear-arsenal.js && node --check longplay.js && node --check coop.js",
     "docs:check": "node scripts/check-docs.mjs",
     "docs:dev": "npx mint dev",
     "mobile:web-sync": "node scripts/sync-mobile.mjs",
