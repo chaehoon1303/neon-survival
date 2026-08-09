@@ -14,16 +14,20 @@
     4: { bossHp: 3.2, spawn: 2.3, elite: 1.6, pattern: 1.35 },
     5: { bossHp: 4, spawn: 2.7, elite: 1.8, pattern: 1.55 }
   };
-  const coop = { socket: null, connected: false, roomCode: localStorage.getItem(COOP_ROOM_KEY) || '', members: [], host: false };
+  const coop = { socket: null, connected: false, roomCode: localStorage.getItem(COOP_ROOM_KEY) || '', members: [], host: false, outbox: [] };
 
+  function accountProfile() {
+    return typeof window.NEON_ACCOUNT?.getSession === 'function' ? window.NEON_ACCOUNT.getSession() : null;
+  }
   function playerCard() {
     const data = typeof characterNow === 'function' ? characterNow() : { name: '훈련 요원', icon: '◉' };
     const weapon = equipped?.weapon?.name || '기본 무기';
     const account = typeof playerLevelState === 'function' ? playerLevelState() : { level: 1 };
-    return { id: 'local', nickname: 'PLAYER', agent: data.name, icon: data.icon || '◉', level: account.level || 1, weapon, ready: false };
+    const profile = accountProfile();
+    return { id: profile?.userId || 'local', nickname: profile?.nickname || 'PLAYER', agent: data.name, icon: data.icon || '◉', level: account.level || 1, weapon, ready: false };
   }
   function roomCode() { return Array.from({ length: 5 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join(''); }
-  function serverUrl() { return String(localStorage.getItem(COOP_SERVER_KEY) || '').trim(); }
+  function serverUrl() { return String(localStorage.getItem(COOP_SERVER_KEY) || window.NEON_COOP_CONFIG?.serverUrl || '').trim(); }
   function isConfigured() { return /^wss:\/\//.test(serverUrl()); }
   function injectUi() {
     const shell = document.querySelector('#game-shell');
@@ -49,14 +53,18 @@
     }).join('');
     const count = Math.max(1, coop.members.length), rule = COOP_BALANCE[count];
     balance.innerHTML = `<span><b>${count}명</b><small>보스 HP ×${rule.bossHp}</small></span><span><b>적 수</b><small>×${rule.spawn}</small></span><span><b>엘리트</b><small>×${rule.elite}</small></span><span><b>패턴</b><small>${count >= 5 ? '협동 장치' : count >= 4 ? '위험 구역 추가' : count >= 3 ? '다중 조준' : '기본'}</small></span>`;
-    const local = coop.members.find(member => member.id === 'local'); ready.textContent = local?.ready ? '준비 취소' : '준비 완료'; start.disabled = !coop.connected || !coop.host || coop.members.length < 2 || !coop.members.every(member => member.ready);
+    const local = coop.members.find(member => member.id === playerCard().id); ready.textContent = local?.ready ? '준비 취소' : '준비 완료'; start.disabled = !coop.connected || !coop.host || coop.members.length < 2 || !coop.members.every(member => member.ready);
   }
-  function send(message) { if (coop.socket?.readyState === WebSocket.OPEN) coop.socket.send(JSON.stringify(message)); }
+  function send(message) {
+    if (coop.socket?.readyState === WebSocket.OPEN) { coop.socket.send(JSON.stringify(message)); return; }
+    coop.outbox.push(message);
+    connect();
+  }
   function connect() {
     if (!isConfigured() || coop.socket?.readyState === WebSocket.OPEN || coop.socket?.readyState === WebSocket.CONNECTING) return;
     try {
       coop.socket = new WebSocket(serverUrl());
-      coop.socket.onopen = () => { coop.connected = true; renderLobby(); };
+      coop.socket.onopen = () => { coop.connected = true; const queued = coop.outbox.splice(0); queued.forEach(message => coop.socket.send(JSON.stringify(message))); renderLobby(); };
       coop.socket.onclose = () => { coop.connected = false; renderLobby(); };
       coop.socket.onerror = () => { coop.connected = false; renderLobby(); };
       coop.socket.onmessage = event => receive(event.data);
@@ -70,16 +78,16 @@
   }
   function createRoom() {
     if (!isConfigured()) { pop('협동 서버 주소가 아직 설정되지 않았습니다.'); return; }
-    coop.roomCode = roomCode(); coop.host = true; coop.members = [playerCard()]; localStorage.setItem(COOP_ROOM_KEY, coop.roomCode); send({ type: 'create-room', roomCode: coop.roomCode, profile: playerCard(), capacity: MAX_PLAYERS, balance: COOP_BALANCE }); renderLobby();
+    coop.roomCode = roomCode(); coop.host = true; coop.members = [playerCard()]; localStorage.setItem(COOP_ROOM_KEY, coop.roomCode); connect(); send({ type: 'create-room', roomCode: coop.roomCode, profile: playerCard(), capacity: MAX_PLAYERS, balance: COOP_BALANCE }); renderLobby();
   }
   function joinRoom() {
     const input = document.querySelector('#coop-room-code'), code = String(input?.value || '').trim().toUpperCase();
     if (!code) { pop('방 코드를 입력하세요.'); return; }
     if (!isConfigured()) { pop('협동 서버 주소가 아직 설정되지 않았습니다.'); return; }
-    coop.roomCode = code; coop.host = false; send({ type: 'join-room', roomCode: code, profile: playerCard() }); renderLobby();
+    coop.roomCode = code; coop.host = false; connect(); send({ type: 'join-room', roomCode: code, profile: playerCard() }); renderLobby();
   }
   async function copyRoomCode() { if (!coop.roomCode) { pop('먼저 방을 만들어 주세요.'); return; } try { await navigator.clipboard.writeText(coop.roomCode); pop(`방 코드 ${coop.roomCode} 복사 완료`); } catch (_) { const input = document.querySelector('#coop-room-code'); input?.select(); document.execCommand('copy'); pop(`방 코드 ${coop.roomCode} 복사 완료`); } }
-  function toggleReady() { const local = coop.members.find(member => member.id === 'local'); if (!local) return; local.ready = !local.ready; send({ type: 'set-ready', roomCode: coop.roomCode, ready: local.ready }); renderLobby(); }
+  function toggleReady() { const local = coop.members.find(member => member.id === playerCard().id); if (!local) return; local.ready = !local.ready; send({ type: 'set-ready', roomCode: coop.roomCode, ready: local.ready }); renderLobby(); }
   function requestStart() { send({ type: 'request-start', roomCode: coop.roomCode }); }
   function installModeCard() {
     if (!gameModes.some(mode => mode.id === 'coop')) gameModes.push({ id: 'coop', icon: '♧', name: '온라인 협동', detail: '방 코드로 최대 5명까지 파티를 구성합니다.' });
