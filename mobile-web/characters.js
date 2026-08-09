@@ -277,7 +277,7 @@ $('#crate-button')?.addEventListener('click',renderOperativeKeyCount);
 const closeCharacters=document.querySelector('[data-close="characters"]');
 if(closeCharacters)closeCharacters.onclick=event=>{event.preventDefault();$('#characters').classList.add('hidden');$('#equipment').classList.remove('hidden');drawGear()};
 characterButtons.forEach(button=>button.addEventListener('pointerdown',event=>{event.preventDefault();useCharacterSkill(button.dataset.characterSkill)}));
-addEventListener('keydown',event=>{if(event.repeat||!run||paused)return;const slot={KeyQ:'q',KeyE:'e',KeyR:'r'}[event.code];if(slot){event.preventDefault();useCharacterSkill(slot)}});
+addEventListener('keydown',event=>{if(event.repeat||!run||paused||typingTarget?.(event.target))return;const slot={KeyQ:'q',KeyE:'e',KeyR:'r'}[event.code];if(slot){event.preventDefault();useCharacterSkill(slot)}});
 renderOperativeKeyCount();renderCharacterList();requestAnimationFrame(drawCharacterEffects);
 
 /* 초월 요원 확장: 공통 데이터와 F 초월기 상태를 별도 설정으로 관리한다. */
@@ -369,7 +369,7 @@ const originalGrantOperative=grantOperative;
 grantOperative=function(source){const roll=Math.random()*100;let id=roll<23.76?'kairos':roll<46.53?'lumina':roll<68.31?'nox':roll<75.24?'frost':roll<80.19?'mirage':roll<84.15?'blaze':roll<87.12?'volt':roll<93.06?'iron':roll<97.02?'arca':roll<99?'gravion':roll<99.2?'astra':roll<99.4?'solaris':roll<99.6?'inkra':roll<99.8?'chronos':'rezona';operativeRoster[id]=(operativeRoster[id]||0)+1;operativeAcquiredOrder[id]=Date.now();saveOperatives();return `${source}: ${OPERATIVE_TIERS[CHARACTER_DATA[id].tier]} 요원 ${CHARACTER_DATA[id].name} 획득!`};
 operativeTierValue.transcendence=5;
 const operativeProbability=$('.operative-probability');if(operativeProbability)operativeProbability.innerHTML='<b>요원 등급 확률</b><span class="common">일반 23.8%</span><span class="rare">희귀 44.6%</span><span class="hero">영웅 18.8%</span><span class="legend">전설 11.8%</span><span class="transcendence">초월 1%</span>';
-addEventListener('keydown',event=>{if(event.repeat||!run||paused||event.code!=='KeyF')return;event.preventDefault();useCharacterSkill('f')});
+addEventListener('keydown',event=>{if(event.repeat||!run||paused||event.code!=='KeyF'||typingTarget?.(event.target))return;event.preventDefault();useCharacterSkill('f')});
 renderCharacterList();
 // 장비 화면 중앙에는 현재 선택한 요원을 표시하고, 매 전투 시작 때 열쇠 드롭 제한을 초기화한다.
 setTimeout(()=>{const drawGearWithOperative=drawGear;drawGear=function(){drawGearWithOperative();const card=$('#equipment .player-card'),data=characterNow();if(card)card.innerHTML=`<span class="agent-preview" style="--agent:${data.color};--agent-accent:${data.accent}">◉</span><b>${data.name}</b><small>${OPERATIVE_TIERS[data.tier]||'기본'} 요원</small>`};drawGear()},0);
