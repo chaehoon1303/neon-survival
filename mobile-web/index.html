@@ -34,12 +34,12 @@
     <section id="characters" class="screen hidden modal-screen character-screen"><button class="close" data-close="characters">×</button><p class="label">OPERATIVE SELECT</p><h2>전투 요원</h2><p>각 요원은 Q·E 전술 스킬과 R 궁극기를 보유합니다.</p><div class="character-heading"><b>보유 요원</b><select id="operative-sort" aria-label="요원 정렬"><option value="tier-desc">높은 등급순</option><option value="tier-asc">낮은 등급순</option><option value="recent">최근 획득순</option><option value="oldest">오래된 획득순</option><option value="power-desc">강함 순</option><option value="power-asc">약함 순</option></select></div><div id="character-list" class="character-list"></div></section>
     <div id="hud" class="hidden"><div class="top"><div><b id="map-name">1. 훈련 구역</b><small id="kill-count">처치 0</small></div><div id="timer">00:00</div></div><div class="stage"><span id="stage-label">STAGE 1</span><div><i id="stage-bar"></i></div><b id="stage-text">0 / 12</b></div><div class="hp"><span>HP <b id="hp-num">100</b></span><div><i id="hp-bar"></i></div><small id="character-passive" class="character-passive"></small></div><div class="xp"><div><i id="xp-bar"></i></div><span>LV. <b id="level">1</b></span></div><div id="skill-controls" class="skill-controls" aria-label="캐릭터 스킬"><button data-character-skill="q"><b>Q</b><small>스킬</small><i></i></button><button data-character-skill="e"><b>E</b><small>스킬</small><i></i></button><button data-character-skill="r" class="ultimate"><b>R</b><small>궁극기</small><i></i></button></div><div id="touch-joystick" class="touch-joystick" aria-label="이동 조이스틱"><div id="touch-stick" class="touch-stick"></div></div><div id="crosshair"><i></i><i></i><i></i><i></i></div></div>
     <div id="notice" role="status" aria-live="polite"></div>
-    <div id="build-version" class="build-version" aria-label="게임 버전">v1.9.1 · BUILD 2026.08.10</div>
+    <div id="build-version" class="build-version" aria-label="게임 버전">v1.9.2 · BUILD 2026.08.10</div>
   </main>
   <script>
     // 매 실행마다 최신 웹 파일을 요청한다. file:// 실행과 GitHub Pages 모두 지원한다.
     (async()=>{
-      const buildVersion='1.9.1-20260810',version=Date.now(),suffix=`?v=${buildVersion}-${version}`;
+      const buildVersion='1.9.2-20260810',version=Date.now(),suffix=`?v=${buildVersion}-${version}`;
       const stylesheet=document.createElement('link');
       stylesheet.rel='stylesheet';stylesheet.href=`style.css${suffix}`;
       document.head.appendChild(stylesheet);

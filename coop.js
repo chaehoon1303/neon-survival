@@ -39,6 +39,11 @@
     document.querySelector('#coop-join').onclick = joinRoom;
     document.querySelector('#coop-ready').onclick = toggleReady;
     document.querySelector('#coop-start').onclick = requestStart;
+    // 이동·스킬 단축키가 창 전체에 등록되어 있어도 방 코드 입력은 완전히
+    // 독립된 텍스트 입력으로 동작해야 한다.
+    const roomInput = document.querySelector('#coop-room-code');
+    roomInput?.addEventListener('keydown', event => event.stopPropagation());
+    roomInput?.addEventListener('keyup', event => event.stopPropagation());
   }
   function openLobby() { injectUi(); coop.members = coop.members.length ? coop.members : [playerCard()]; document.querySelector('#coop-lobby').classList.remove('hidden'); renderLobby(); if (isConfigured()) connect(); }
   function closeLobby() { document.querySelector('#coop-lobby')?.classList.add('hidden'); }
@@ -74,7 +79,16 @@
     let message; try { message = JSON.parse(raw); } catch (_) { return; }
     if (message.type === 'room-state') { coop.roomCode = message.roomCode || coop.roomCode; coop.members = Array.isArray(message.members) ? message.members.slice(0, MAX_PLAYERS) : coop.members; coop.host = !!message.host; localStorage.setItem(COOP_ROOM_KEY, coop.roomCode); renderLobby(); }
     if (message.type === 'room-error') pop(message.message || '방 연결에 실패했습니다.');
-    if (message.type === 'start-approved') { closeLobby(); pop('협동 작전 서버가 전투 상태를 시작했습니다.'); }
+    if (message.type === 'start-approved') {
+      closeLobby();
+      document.querySelector('#modes')?.classList.add('hidden');
+      document.querySelector('#menu')?.classList.remove('hidden');
+      // 현재 서버는 방·준비 상태를 권한 있게 판정한다. 실제 적/드롭 동기화가
+      // 추가되기 전까지는 같은 작전을 각 클라이언트에서 즉시 시작한다.
+      activeMode = 'conquest';
+      tryBegin();
+      if (run) pop(`NEON SQUAD · ${message.players?.length || coop.members.length}명 작전 시작!`);
+    }
   }
   function createRoom() {
     if (!isConfigured()) { pop('협동 서버 주소가 아직 설정되지 않았습니다.'); return; }
