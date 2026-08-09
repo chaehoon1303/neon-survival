@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "python3 -m http.server 8080",
-    "check:js": "node --check game.js && node --check base.js && node --check modes.js && node --check characters.js && node --check orientation.js",
+    "check:js": "node --check game.js && node --check base.js && node --check modes.js && node --check characters.js && node --check orientation.js && node --check variety.js && node --check lobby.js && node --check battle-select.js && node --check player-level.js && node --check arsenal.js && node --check ui-depth.js && node --check gear-arsenal.js && node --check longplay.js",
     "docs:check": "node scripts/check-docs.mjs",
     "docs:dev": "npx mint dev",
     "mobile:web-sync": "node scripts/sync-mobile.mjs",
@@ -13,6 +13,7 @@
     "graph:update": "uvx --cache-dir .tooling/uv-cache --from graphifyy graphify update .",
     "check": "npm run mobile:web-sync && npm run check:js && npm run docs:check",
     "ios:sync": "npm run mobile:web-sync && DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer cap sync ios",
+    "ios:run": "npm run ios:sync && DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer cap run ios",
     "ios:open": "cap open ios",
     "android:add": "npm run mobile:web-sync && cap add android",
     "android:sync": "npm run mobile:web-sync && cap sync android",

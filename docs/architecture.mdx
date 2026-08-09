@@ -11,6 +11,14 @@ flowchart LR
   HTML["index.html · UI와 Canvas"] --> CORE["game.js · 핵심 게임/메타 시스템"]
   CORE --> BASE["base.js · 기지 성장 확장"]
   BASE --> MODES["modes.js · 전투 모드 확장"]
+  MODES --> VARIETY["variety.js · 반복 전투 다양성 확장"]
+  VARIETY --> LOBBY["lobby.js · 네온 기지 로비 확장"]
+  LOBBY --> BATTLE["battle-select.js · 전투 선택 확장"]
+  BATTLE --> ACCOUNT["player-level.js · 계정 레벨 확장"]
+  ACCOUNT --> ARSENAL["arsenal.js · 오리지널 무기·상자 확장"]
+  ARSENAL --> UI["ui-depth.js / ui-depth.css · 게임형 UI 표현 레이어"]
+  UI --> GEAR["gear-arsenal.js / gear-arsenal.css · 장비 아트·세트·전투 효과 확장"]
+  GEAR --> LONG["longplay.js / longplay.css · 숙련도·유물·현상수배·장기 목표"]
   ASSETS["assets/ · 이미지 시트"] --> CORE
   CORE --> STORAGE["localStorage · 영속 데이터"]
   MODES --> LOOP["Canvas + requestAnimationFrame"]
@@ -30,6 +38,14 @@ flowchart LR
 | `base.js` | 기지 시설, 복구 진행도, 전투 보너스 |
 | `modes.js` | 정복/무한/보스 러시 규칙과 루프 확장 |
 | `characters.js` | 요원 데이터, Q/E/R/F 입력·쿨타임, 궁극기·초월기 충전, 기간 한정 이벤트와 요원 전용 투사체·영역 효과 |
+| `variety.js` | 스킬 융합, 무작위 전투 변이, 전투 중 선택 이벤트와 발견 기록 |
+| `lobby.js` | 홈 로비 전시/환경 효과, 도감, 장기 기록·업적, 전광판, 출석 보급 |
+| `battle-select.js` | 전투 지역 미리보기, 진행도·기록·보상 정보와 기존 출격 흐름 연결 |
+| `player-level.js` | 계정 XP/레벨·보상·칭호, 전투 종료 XP 정산, 장비 종합 능력치 UI |
+| `arsenal.js` | 오리지널 주무기 데이터, 1~5성/돌파, 전장 효과, 무기 분석 및 상자 개봉 연출 |
+| `ui-depth.js`, `ui-depth.css` | 기능·저장 데이터와 분리된 2.5D 카드/버튼 반응, 화면 진입, 금속·유리·홀로그램 UI 표현 |
+| `gear-arsenal.js`, `gear-arsenal.css` | 기존 장비 저장 구조를 유지한 전용 장비 아트, 머리 모듈 슬롯, 장비 상세·강화 UI, 신규 장비/세트 및 전투 효과 |
+| `longplay.js`, `longplay.css` | 무기 숙련도/분기 진화, 유물, 오버드라이브, 보스 부위 파괴, 비밀 기록·히든 보스, 현상수배, 시즌 작전, NEON CORE 장기 목표 |
 | `mobile-web/` | Capacitor의 `webDir`이 가리키는 배포 스냅샷 |
 | `sw.js` | 웹 배포에서 최신 파일을 우선 요청하고 오프라인 시 캐시를 사용하는 서비스 워커 |
 | `scripts/sync-mobile.mjs` | 웹 원본과 에셋을 `mobile-web/`에 동기화 |
@@ -37,7 +53,7 @@ flowchart LR
 
 ## 중요한 결합 지점
 
-모든 스크립트는 ES 모듈이 아닌 전역 스코프에서 실행된다. `base.js`, `modes.js`, `characters.js`는 `begin`, `end`, `spawnEnemy`, `update`, `draw` 같은 함수를 저장한 뒤 다시 할당해 기능을 확장한다. 따라서 `index.html`의 로드 순서는 공개 API와 같다. 요원 시스템은 기존 확장이 준비된 뒤 실행되므로 항상 마지막에 로드한다.
+모든 스크립트는 ES 모듈이 아닌 전역 스코프에서 실행된다. `base.js`, `modes.js`, `characters.js`, `variety.js`, `lobby.js`, `battle-select.js`, `player-level.js`, `arsenal.js`는 `begin`, `end`, `spawnEnemy`, `hurt`, `draw` 같은 함수를 저장한 뒤 다시 할당해 기능을 확장한다. 따라서 `index.html`의 로드 순서는 공개 API와 같다. `variety.js`, `lobby.js`, `battle-select.js`, `player-level.js`, `arsenal.js`는 요원 시스템과 화면 회전 처리 이후에 로드되어 기존 전투를 보존한 채 후처리 확장을 적용한다. 무기고 확장은 최종 `weaponAttack`/`levelUp`/상점 함수를 감싸 신규 무기를 분기한다.
 
 <Warning>
   전역 함수를 이름 변경하거나 시그니처를 바꾸면 뒤 스크립트의 래퍼도 반드시 함께 수정해야 한다.

@@ -27,7 +27,7 @@ function saveOperatives(){localStorage.neonOperativeRoster=JSON.stringify(operat
 function operativeRank(id=selectedCharacter){return operativeRanks[id]||0}
 function grantOperative(source){const roll=Math.random()*100,id=roll<24?'kairos':roll<47?'lumina':roll<69?'nox':roll<76?'frost':roll<81?'mirage':roll<85?'blaze':roll<88?'volt':roll<94?'iron':roll<98?'arca':'gravion';operativeRoster[id]=(operativeRoster[id]||0)+1;operativeAcquiredOrder[id]=Date.now();saveOperatives();return `${source}: ${OPERATIVE_TIERS[CHARACTER_DATA[id].tier]} 요원 ${CHARACTER_DATA[id].name} 획득!`}
 function registerMapClear(){operativeClears++;let reward='';if(operativeClears%3===0)reward=grantOperative('정복 보상');else{saveOperatives();reward=`요원 신호 ${operativeClears%3}/3 · 다음 요원까지 ${3-operativeClears%3}회 클리어`}return reward}
-function renderOperativeKeyCount(){const keyLabel=$('#operative-key-count');if(keyLabel)keyLabel.textContent=`🔑 ${operativeCrateKeys}`}
+function renderOperativeKeyCount(){const keyLabel=$('#operative-key-count'),walletKey=$('#operative-key-wallet');if(keyLabel)keyLabel.textContent=`🔑 ${operativeCrateKeys}`;if(walletKey)walletKey.textContent=operativeCrateKeys}
 function openOperativeCrate(){
   if(operativeCrateOpening)return;
   if(operativeCrateKeys>0)operativeCrateKeys--;

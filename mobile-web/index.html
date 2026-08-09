@@ -19,7 +19,7 @@
       <div class="title"><p>NEON ROGUELITE</p><h1>NEON<br><span>SURVIVOR</span></h1><small>끝없는 적을 뚫고 지역을 정복하세요.</small></div>
       <div class="map-nav"><button id="map-prev" class="map-arrow">‹</button><div id="map-picker" class="map-picker"></div><button id="map-next" class="map-arrow">›</button></div>
       <button id="play-button" class="play-button">▶&nbsp; 플레이</button>
-      <div class="mode-tabs"><button id="base-button">🏠<small>기지</small></button><button id="equipment-button">🎒<small>장비</small></button><button id="battle-tab" class="battle-tab">⚔<small>전투</small></button><button id="crate-button">📦<small>상자</small></button><button id="mode-button">🎯<small>모드</small></button></div><button id="quest-button" class="quest-button">📜<small>퀘스트</small></button><div id="coin-wallet" class="coin-wallet">🪙 0</div>
+      <div class="mode-tabs"><button id="base-button">🏠<small>기지</small></button><button id="equipment-button">🎒<small>장비</small></button><button id="battle-tab" class="battle-tab">⚔<small>전투</small></button><button id="crate-button">📦<small>상자</small></button><button id="mode-button">🎯<small>모드</small></button></div><button id="quest-button" class="quest-button">📜<small>퀘스트</small></button><div id="coin-wallet" class="coin-wallet" aria-label="보유 재화"><span class="wallet-coin">🪙 <b id="coin-count">0</b></span><span class="wallet-key" aria-label="요원 열쇠"><span class="operative-key-icon" aria-hidden="true">🔑</span><b id="operative-key-wallet">0</b></span></div>
       <div id="settings" class="panel hidden"><b>설정</b><label>BGM 볼륨 <input id="sound" type="range" min="0" max="100" value="60"></label><small>이동: WASD · 장착 무기 자동 공격</small></div>
     </section>
     <section id="upgrade" class="screen hidden"><p class="label">LEVEL UP!</p><h2>강화 하나를 선택하세요</h2><div id="upgrade-list" class="upgrade-list"></div><p id="evolution-hint" class="evolution-hint"></p></section>
@@ -34,17 +34,29 @@
     <section id="characters" class="screen hidden modal-screen character-screen"><button class="close" data-close="characters">×</button><p class="label">OPERATIVE SELECT</p><h2>전투 요원</h2><p>각 요원은 Q·E 전술 스킬과 R 궁극기를 보유합니다.</p><div class="character-heading"><b>보유 요원</b><select id="operative-sort" aria-label="요원 정렬"><option value="tier-desc">높은 등급순</option><option value="tier-asc">낮은 등급순</option><option value="recent">최근 획득순</option><option value="oldest">오래된 획득순</option><option value="power-desc">강함 순</option><option value="power-asc">약함 순</option></select></div><div id="character-list" class="character-list"></div></section>
     <div id="hud" class="hidden"><div class="top"><div><b id="map-name">1. 훈련 구역</b><small id="kill-count">처치 0</small></div><div id="timer">00:00</div></div><div class="stage"><span id="stage-label">STAGE 1</span><div><i id="stage-bar"></i></div><b id="stage-text">0 / 12</b></div><div class="hp"><span>HP <b id="hp-num">100</b></span><div><i id="hp-bar"></i></div><small id="character-passive" class="character-passive"></small></div><div class="xp"><div><i id="xp-bar"></i></div><span>LV. <b id="level">1</b></span></div><div id="skill-controls" class="skill-controls" aria-label="캐릭터 스킬"><button data-character-skill="q"><b>Q</b><small>스킬</small><i></i></button><button data-character-skill="e"><b>E</b><small>스킬</small><i></i></button><button data-character-skill="r" class="ultimate"><b>R</b><small>궁극기</small><i></i></button></div><div id="touch-joystick" class="touch-joystick" aria-label="이동 조이스틱"><div id="touch-stick" class="touch-stick"></div></div><div id="crosshair"><i></i><i></i><i></i><i></i></div></div>
     <div id="notice" role="status" aria-live="polite"></div>
-    <div id="build-version" class="build-version" aria-label="게임 버전">v1.1.1 · BUILD 2026.08.05</div>
+    <div id="build-version" class="build-version" aria-label="게임 버전">v1.8.0 · BUILD 2026.08.09</div>
   </main>
   <script>
     // 매 실행마다 최신 웹 파일을 요청한다. file:// 실행과 GitHub Pages 모두 지원한다.
     (async()=>{
-      const buildVersion='1.1.1-20260805',version=Date.now(),suffix=`?v=${buildVersion}-${version}`;
+      const buildVersion='1.8.0-20260809',version=Date.now(),suffix=`?v=${buildVersion}-${version}`;
       const stylesheet=document.createElement('link');
       stylesheet.rel='stylesheet';stylesheet.href=`style.css${suffix}`;
       document.head.appendChild(stylesheet);
       await new Promise(resolve=>{stylesheet.onload=resolve;stylesheet.onerror=resolve});
-      for(const source of ['game.js','base.js','modes.js','characters.js','orientation.js']){
+      const depthStylesheet=document.createElement('link');
+      depthStylesheet.rel='stylesheet';depthStylesheet.href=`ui-depth.css${suffix}`;
+      document.head.appendChild(depthStylesheet);
+      await new Promise(resolve=>{depthStylesheet.onload=resolve;depthStylesheet.onerror=resolve});
+      const gearStylesheet=document.createElement('link');
+      gearStylesheet.rel='stylesheet';gearStylesheet.href=`gear-arsenal.css${suffix}`;
+      document.head.appendChild(gearStylesheet);
+      await new Promise(resolve=>{gearStylesheet.onload=resolve;gearStylesheet.onerror=resolve});
+      const longplayStylesheet=document.createElement('link');
+      longplayStylesheet.rel='stylesheet';longplayStylesheet.href=`longplay.css${suffix}`;
+      document.head.appendChild(longplayStylesheet);
+      await new Promise(resolve=>{longplayStylesheet.onload=resolve;longplayStylesheet.onerror=resolve});
+      for(const source of ['game.js','base.js','modes.js','characters.js','orientation.js','variety.js','lobby.js','battle-select.js','player-level.js','arsenal.js','ui-depth.js','gear-arsenal.js','longplay.js']){
         await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=source+suffix;script.onload=resolve;script.onerror=()=>reject(new Error(`${source} 로드 실패`));document.body.appendChild(script)});
       }
       if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register(`sw.js${suffix}`,{updateViaCache:'none'}).then(registration=>registration.update()).catch(()=>{});

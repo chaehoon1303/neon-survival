@@ -4,7 +4,10 @@ import path from 'node:path';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const output=path.join(root,'_site');
-const webFiles=['index.html','style.css','game.js','base.js','modes.js','characters.js','orientation.js','sw.js'];
+// GitHub Pages must contain every dynamically loaded web layer.  Keeping this
+// list alongside the mobile sync list prevents a newer local build from
+// silently falling back to older scripts on a phone.
+const webFiles=['index.html','style.css','ui-depth.css','gear-arsenal.css','longplay.css','game.js','base.js','modes.js','characters.js','orientation.js','variety.js','lobby.js','battle-select.js','player-level.js','arsenal.js','ui-depth.js','gear-arsenal.js','longplay.js','sw.js'];
 
 await rm(output,{recursive:true,force:true});
 await mkdir(output,{recursive:true});
