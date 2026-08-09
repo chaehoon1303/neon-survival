@@ -6,6 +6,7 @@
 (function () {
   const COOP_SERVER_KEY = 'neonCoopServerUrl';
   const COOP_ROOM_KEY = 'neonCoopLastRoom';
+  const COOP_GUEST_ID_KEY = 'neonCoopGuestId';
   const MAX_PLAYERS = 5;
   const COOP_BALANCE = {
     1: { bossHp: 1, spawn: 1, elite: 1, pattern: 1 },
@@ -19,12 +20,20 @@
   function accountProfile() {
     return typeof window.NEON_ACCOUNT?.getSession === 'function' ? window.NEON_ACCOUNT.getSession() : null;
   }
+  function guestId() {
+    let id = localStorage.getItem(COOP_GUEST_ID_KEY);
+    if (!id) {
+      id = `guest-${globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`}`;
+      localStorage.setItem(COOP_GUEST_ID_KEY, id);
+    }
+    return id;
+  }
   function playerCard() {
     const data = typeof characterNow === 'function' ? characterNow() : { name: '훈련 요원', icon: '◉' };
     const weapon = equipped?.weapon?.name || '기본 무기';
     const account = typeof playerLevelState === 'function' ? playerLevelState() : { level: 1 };
     const profile = accountProfile();
-    return { id: profile?.userId || 'local', nickname: profile?.nickname || 'PLAYER', agent: data.name, icon: data.icon || '◉', level: account.level || 1, weapon, ready: false };
+    return { id: profile?.userId || guestId(), nickname: profile?.nickname || `GUEST_${guestId().slice(-4).toUpperCase()}`, agent: data.name, icon: data.icon || '◉', level: account.level || 1, weapon, ready: false };
   }
   function roomCode() { return Array.from({ length: 5 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join(''); }
   function serverUrl() { return String(localStorage.getItem(COOP_SERVER_KEY) || window.NEON_COOP_CONFIG?.serverUrl || '').trim(); }
@@ -80,6 +89,10 @@
     if (message.type === 'room-state') { coop.roomCode = message.roomCode || coop.roomCode; coop.members = Array.isArray(message.members) ? message.members.slice(0, MAX_PLAYERS) : coop.members; coop.host = !!message.host; localStorage.setItem(COOP_ROOM_KEY, coop.roomCode); renderLobby(); }
     if (message.type === 'room-error') pop(message.message || '방 연결에 실패했습니다.');
     if (message.type === 'start-approved') {
+      // 서버가 보낸 방 멤버 수와 현재 로비의 멤버 수가 일치할 때만 출격한다.
+      // 늦게 도착한 이전 room-state 때문에 누군가 로비에 남는 일을 막는다.
+      if (!Array.isArray(message.players) || message.players.length < 2) { pop('협동 파티 정보를 다시 확인하는 중입니다.'); return; }
+      coop.members = message.players.slice(0, MAX_PLAYERS);
       closeLobby();
       document.querySelector('#modes')?.classList.add('hidden');
       document.querySelector('#menu')?.classList.remove('hidden');
