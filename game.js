@@ -461,7 +461,10 @@ function end(win=false){run=false;resetTouchJoystick();ui.hud.classList.add('hid
 const riftCanvas=$('#rift-overlay'),riftX=riftCanvas?.getContext('2d');
 let rift={opened:false,active:false,portal:null,time:0,shards:[],stored:[],lastPlayer:null};
 // 화면에 그려지는 보라색 고리와 플레이어 크기까지 포함한 실제 상호작용 반경이다.
-const RIFT_PORTAL_ENTER_RADIUS=120,RIFT_SHARD_COLLECT_RADIUS=82;
+// 균열 판정은 캔버스에 그려지는 중심점과 같은 좌표를 사용한다.  예전에는
+// 장식 전체보다 훨씬 큰 반경을 써서 포털 위쪽 문구나 조각 옆을 밟아도
+// 판정되거나, 반대로 작은 화면에서 실제 그림과 어긋나 보였다.
+const RIFT_PORTAL_ENTER_RADIUS=70,RIFT_SHARD_COLLECT_RADIUS=34;
 function resetRiftRun(){rift={opened:false,active:false,portal:null,time:0,shards:[],stored:[],lastPlayer:null};riftX?.clearRect(0,0,W,H)}
 function grantRiftReward(){const roll=Math.random();if(roll<.45){wallet+=1000;localStorage.neonCoins=wallet;renderCoins();return'🪙 1,000 코인'}const tier=roll<.8?'hero':'legend',pool=[...weapons,...armors.filter(item=>item.slot==='armor')].filter(item=>item.tier===tier),item={...pool[Math.floor(Math.random()*pool.length)]};inventory.push(item);saveGear();drawGear();return`${tier==='legend'?'전설':'영웅'} ${item.slot==='weapon'?'무기':'갑옷'} · ${item.name}`}
 function enterRift(){rift.active=true;rift.portal=null;rift.time=14;rift.stored=enemies.map(enemy=>({enemy,x:enemy.x,y:enemy.y}));for(const item of rift.stored){item.enemy.x=-9999;item.enemy.y=-9999}player.x=W/2;player.y=H/2;rift.lastPlayer={x:player.x,y:player.y};rift.shards=Array.from({length:6},(_,i)=>{const a=i*Math.PI*2/6+.35,r=120+(i%2)*65;return{id:i+1,x:W/2+Math.cos(a)*r,y:H/2+Math.sin(a)*r,phase:i*.8}});pop('균열 내부 진입 · 14초 안에 신호 조각 6개를 모으세요!')}
@@ -488,7 +491,11 @@ function riftLoop(now){
       const from=rift.lastPlayer||{x:player.x,y:player.y},to={x:player.x,y:player.y};
       let collected=0;
       for(let i=rift.shards.length-1;i>=0;i--){
-        if(pointToMoveDistance(rift.shards[i].x,rift.shards[i].y,from,to)<=RIFT_SHARD_COLLECT_RADIUS+(player.r||0)){
+        const shard=rift.shards[i];
+        // 현재 위치와 이번 프레임 이동 선분을 모두 확인해 대시·돌진 무기도
+        // 그림 중앙을 통과하면 정확히 획득되도록 한다.
+        const hitNow=Math.hypot(player.x-shard.x,player.y-shard.y)<=RIFT_SHARD_COLLECT_RADIUS+(player.r||0);
+        if(hitNow||pointToMoveDistance(shard.x,shard.y,from,to)<=RIFT_SHARD_COLLECT_RADIUS+(player.r||0)){
           rift.shards.splice(i,1);collected++;
         }
       }
