@@ -15,7 +15,7 @@
     4: { bossHp: 3.2, spawn: 2.3, elite: 1.6, pattern: 1.35 },
     5: { bossHp: 4, spawn: 2.7, elite: 1.8, pattern: 1.55 }
   };
-  const coop = { socket: null, connected: false, roomCode: localStorage.getItem(COOP_ROOM_KEY) || '', members: [], host: false, outbox: [] };
+  const coop = { socket: null, connected: false, roomCode: localStorage.getItem(COOP_ROOM_KEY) || '', members: [], host: false, outbox: [], battle: { active: false, matchId: '', spawn: { x: 640, y: 360 }, remote: new Map(), nextSend: 0 } };
 
   function accountProfile() {
     return typeof window.NEON_ACCOUNT?.getSession === 'function' ? window.NEON_ACCOUNT.getSession() : null;
@@ -79,7 +79,7 @@
     try {
       coop.socket = new WebSocket(serverUrl());
       coop.socket.onopen = () => { coop.connected = true; const queued = coop.outbox.splice(0); queued.forEach(message => coop.socket.send(JSON.stringify(message))); renderLobby(); };
-      coop.socket.onclose = () => { coop.connected = false; renderLobby(); };
+      coop.socket.onclose = () => { coop.connected = false; coop.battle.active = false; coop.battle.remote.clear(); renderLobby(); };
       coop.socket.onerror = () => { coop.connected = false; renderLobby(); };
       coop.socket.onmessage = event => receive(event.data);
     } catch (_) { coop.connected = false; renderLobby(); }
@@ -88,6 +88,7 @@
     let message; try { message = JSON.parse(raw); } catch (_) { return; }
     if (message.type === 'room-state') { coop.roomCode = message.roomCode || coop.roomCode; coop.members = Array.isArray(message.members) ? message.members.slice(0, MAX_PLAYERS) : coop.members; coop.host = !!message.host; localStorage.setItem(COOP_ROOM_KEY, coop.roomCode); renderLobby(); }
     if (message.type === 'room-error') pop(message.message || '방 연결에 실패했습니다.');
+    if (message.type === 'player-state' && message.player?.id !== playerCard().id) coop.battle.remote.set(message.player.id, message.player);
     if (message.type === 'start-approved') {
       // 서버가 보낸 방 멤버 수와 현재 로비의 멤버 수가 일치할 때만 출격한다.
       // 늦게 도착한 이전 room-state 때문에 누군가 로비에 남는 일을 막는다.
@@ -100,7 +101,12 @@
       // 추가되기 전까지는 같은 작전을 각 클라이언트에서 즉시 시작한다.
       activeMode = 'conquest';
       tryBegin();
-      if (run) pop(`NEON SQUAD · ${message.players?.length || coop.members.length}명 작전 시작!`);
+      if (run) {
+        const spawn = message.spawn || { x: 640, y: 360 };
+        player.x = spawn.x; player.y = spawn.y;
+        coop.battle.active = true; coop.battle.matchId = message.matchId || ''; coop.battle.spawn = spawn; coop.battle.remote.clear(); coop.battle.nextSend = 0;
+        pop(`NEON SQUAD · ${message.players.length}명 작전 시작!`);
+      }
     }
   }
   function createRoom() {
@@ -123,6 +129,24 @@
     document.querySelector('#mode-play').onclick = function () { if (selectedMode === 'coop') { openLobby(); return; } originalPlay?.apply(this, arguments); };
     renderModes();
   }
+  function sendBattleState(now) {
+    if (coop.battle.active && run && coop.socket?.readyState === WebSocket.OPEN && now >= coop.battle.nextSend) {
+      const profile = accountProfile(), data = typeof characterNow === 'function' ? characterNow() : { name: '훈련 요원', icon: '◉' };
+      coop.battle.nextSend = now + 100;
+      send({ type: 'player-state', roomCode: coop.roomCode, player: { id: playerCard().id, nickname: profile?.nickname || playerCard().nickname, agent: data.name, icon: data.icon || '◉', x: player.x, y: player.y, hp: player.hp, maxHp: player.maxHp } });
+    }
+    requestAnimationFrame(sendBattleState);
+  }
+  function drawRemotePlayers() {
+    if (coop.battle.active && run && typeof x !== 'undefined') {
+      for (const member of coop.battle.remote.values()) {
+        x.save(); x.globalAlpha = .95; x.translate(member.x, member.y); x.fillStyle = '#8cf3ff'; x.shadowBlur = 18; x.shadowColor = '#5be7ff'; x.beginPath(); x.arc(0, 0, 16, 0, Math.PI * 2); x.fill(); x.fillStyle = '#0a1a31'; x.beginPath(); x.arc(0, 0, 8, 0, Math.PI * 2); x.fill(); x.shadowBlur = 0; x.fillStyle = '#e8fbff'; x.font = 'bold 12px sans-serif'; x.textAlign = 'center'; x.fillText(member.nickname || 'SURVIVOR', 0, -24); x.fillStyle = '#18334c'; x.fillRect(-24, 20, 48, 5); x.fillStyle = '#54efa2'; x.fillRect(-24, 20, 48 * Math.max(0, Math.min(1, member.hp / Math.max(1, member.maxHp))), 5); x.restore();
+      }
+    }
+    requestAnimationFrame(drawRemotePlayers);
+  }
   window.NEON_COOP = { balance: COOP_BALANCE, setServer(url) { localStorage.setItem(COOP_SERVER_KEY, String(url || '')); }, openLobby };
+  requestAnimationFrame(sendBattleState);
+  requestAnimationFrame(drawRemotePlayers);
   setTimeout(installModeCard, 0);
 })();

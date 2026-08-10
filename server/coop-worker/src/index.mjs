@@ -94,6 +94,7 @@ export class NeonCoopLobby {
     if (type === 'join-room') return this.join(socket, message);
     if (type === 'set-ready') return this.setReady(socket, message);
     if (type === 'request-start') return this.start(socket, message);
+    if (type === 'player-state') return this.playerState(socket, message);
     return this.error(socket, '알 수 없는 협동 요청입니다.');
   }
 
@@ -137,7 +138,14 @@ export class NeonCoopLobby {
     if (attachment.playerId !== room.hostId) return this.error(socket, '방장만 작전을 시작할 수 있습니다.');
     if (room.members.length < 2) return this.error(socket, '협동 작전은 2명 이상 필요합니다.');
     if (!room.members.every(member => member.ready)) return this.error(socket, '모든 플레이어가 준비해야 합니다.');
-    this.broadcast(attachment.roomCode, { type: 'start-approved', roomCode: attachment.roomCode, players: room.members.map(member => ({ ...member })) });
+    this.broadcast(attachment.roomCode, { type: 'start-approved', roomCode: attachment.roomCode, matchId: crypto.randomUUID(), spawn: { x: 640, y: 360 }, players: room.members.map(member => ({ ...member })) });
+  }
+
+  playerState(socket, message) {
+    const attachment = socket.deserializeAttachment() || {}, room = this.rooms.get(attachment.roomCode), state = message.player;
+    if (!room || message.roomCode !== attachment.roomCode || !state || state.id !== attachment.playerId) return this.error(socket, '전투 연결을 확인할 수 없습니다.');
+    const player = { id: attachment.playerId, nickname: cleanText(state.nickname, 18) || 'SURVIVOR', agent: cleanText(state.agent, 32) || '훈련 요원', icon: cleanText(state.icon, 16) || '◉', x: Math.max(20, Math.min(1260, Number(state.x) || 640)), y: Math.max(20, Math.min(700, Number(state.y) || 360)), hp: Math.max(0, Math.min(10000, Number(state.hp) || 0)), maxHp: Math.max(1, Math.min(10000, Number(state.maxHp) || 100)) };
+    this.broadcast(attachment.roomCode, { type: 'player-state', roomCode: attachment.roomCode, player });
   }
 
   async leave(socket, announce = true) {
