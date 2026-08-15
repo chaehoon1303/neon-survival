@@ -1,6 +1,6 @@
 {
   "name": "neon-survivor-mobile",
-  "version": "1.11.3",
+  "version": "1.11.4",
   "private": true,
   "scripts": {
     "dev": "python3 -m http.server 8080",

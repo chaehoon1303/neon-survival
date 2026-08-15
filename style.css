@@ -185,7 +185,7 @@ html,body,#game-shell,.screen,button,canvas{touch-action:manipulation}
 @media (max-height:500px) and (orientation:landscape){
   html.native-mobile{--native-frame-top:max(4px,env(safe-area-inset-top));--native-frame-bottom:max(4px,env(safe-area-inset-bottom));--native-frame-left:max(22px,env(safe-area-inset-left));--native-frame-right:max(22px,env(safe-area-inset-right))}
   html.native-ios{--native-frame-left:max(52px,env(safe-area-inset-left));--native-frame-right:max(52px,env(safe-area-inset-right))}
-  html.native-mobile #game-shell{position:fixed;left:var(--native-frame-left);right:var(--native-frame-right);top:var(--native-frame-top);bottom:var(--native-frame-bottom);width:auto;height:auto;--safe-l:10px;--safe-r:10px;--safe-t:7px;--safe-b:7px;border:1px solid #3ccff62b;border-radius:13px;overflow:hidden;box-shadow:0 0 28px #000,inset 0 0 18px #50eaff0d}
+  html.native-mobile #game-shell{position:fixed;left:var(--native-frame-left);right:var(--native-frame-right);top:var(--native-frame-top);bottom:var(--native-frame-bottom);width:auto;height:auto;--safe-l:10px;--safe-r:10px;--safe-t:7px;--safe-b:7px;border:1px solid #3ccff62b;border-radius:13px;overflow:hidden;transform:translateZ(0);transform-origin:center;isolation:isolate;box-shadow:0 0 28px #000,inset 0 0 18px #50eaff0d}
   html.native-mobile #game-shell>canvas{width:min(100%,177.7778dvh);height:auto;max-width:100%;max-height:100%}
   html.native-mobile #rift-overlay{width:min(100%,177.7778dvh);height:auto;max-width:100%;max-height:100%}
 

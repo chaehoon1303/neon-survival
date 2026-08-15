@@ -8,8 +8,10 @@
   const SESSION_KEY = 'neonAccountSession';
   const SNAPSHOT_KEY = 'neonAccountSnapshot';
   const CHANGE_KEY = 'neonAccountLastLocalChange';
+  const GUEST_IDENTITY_KEY = 'neonGuestIdentity';
+  const EXPLICIT_LOGOUT_KEY = 'neonAccountExplicitLogout';
   const SAVE_VERSION = 1;
-  const ACCOUNT_KEYS = new Set([SESSION_KEY, SNAPSHOT_KEY, CHANGE_KEY, 'neonCoopServerUrl', 'neonCoopLastRoom']);
+  const ACCOUNT_KEYS = new Set([SESSION_KEY, SNAPSHOT_KEY, CHANGE_KEY, GUEST_IDENTITY_KEY, EXPLICIT_LOGOUT_KEY, 'neonCoopServerUrl', 'neonCoopLastRoom']);
   const config = window.NEON_ACCOUNT_CONFIG || {};
   const account = { supabase: null, session: null, saving: false, queued: false, lastHash: '', saveTimer: 0, cloudLastSavedAt: 0 };
 
@@ -18,7 +20,20 @@
   function uid() { return crypto?.randomUUID?.() || `guest-${now()}-${Math.random().toString(36).slice(2, 10)}`; }
   function nickname() { return `NEON_${Math.floor(100 + Math.random() * 900)}`; }
   function readSession() { return safeJson(localStorage.getItem(SESSION_KEY) || 'null', null); }
-  function writeSession(session) { account.session = session; localStorage.setItem(SESSION_KEY, JSON.stringify(session)); }
+  function writeSession(session) {
+    account.session = session;
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.removeItem(EXPLICIT_LOGOUT_KEY);
+    if (session?.guest) localStorage.setItem(GUEST_IDENTITY_KEY, JSON.stringify(session));
+  }
+  function recoverGuestSession() {
+    if (localStorage.getItem(EXPLICIT_LOGOUT_KEY) === '1') return null;
+    const backup = safeJson(localStorage.getItem(GUEST_IDENTITY_KEY) || 'null', null);
+    if (backup?.userId) return { ...backup, guest: true, provider: 'guest', updatedAt: now() };
+    /* 이전 빌드에서 게스트 세션 키만 사라진 경우 진행 변경 시각으로 복구한다. */
+    if (localStorage.getItem(CHANGE_KEY) !== null) return { userId: uid(), nickname: nickname(), provider: 'guest', guest: true, recovered: true, createdAt: now(), updatedAt: now() };
+    return null;
+  }
   function hasAuthConfig() { return /^https:\/\//.test(config.supabaseUrl || '') && /^(sb_publishable_|eyJ)/.test(config.supabasePublishableKey || ''); }
   function hasProgressApi() { return /^https:\/\//.test(config.progressApiBase || ''); }
   function saveIndicator(state, detail = '') { const node = document.querySelector('#cloud-save-indicator'); if (!node) return; node.className = `cloud-save-indicator ${state}`; node.textContent = state === 'saving' ? '저장 중…' : state === 'saved' ? `✓ 저장 완료${detail ? ` · ${detail}` : ''}` : state === 'offline' ? '⚠ 오프라인 · 기기에 임시 저장' : state === 'guest' ? '게스트 · 기기 저장' : '클라우드 대기'; }
@@ -90,7 +105,7 @@
     const { error } = await client.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}${location.pathname}` } });
     setLoginMessage(error ? error.message : '이메일로 안전한 로그인 링크를 보냈습니다.');
   }
-  function startGuest() { const previous = readSession(); if (!previous) writeSession({ userId: uid(), nickname: nickname(), provider: 'guest', guest: true, createdAt: now(), updatedAt: now() }); else writeSession(previous); localStorage.setItem(CHANGE_KEY, String(now())); hideLogin(); saveIndicator('guest'); renderAccount(); }
+  function startGuest() { const previous = readSession() || recoverGuestSession(); if (!previous) writeSession({ userId: uid(), nickname: nickname(), provider: 'guest', guest: true, createdAt: now(), updatedAt: now() }); else writeSession(previous); localStorage.setItem(CHANGE_KEY, String(now())); hideLogin(); saveIndicator('guest'); renderAccount(); }
   function setLoginMessage(message) { const node = document.querySelector('#account-login-message'); if (node) node.textContent = message; }
   function showLogin() { document.querySelector('#account-gate')?.classList.remove('hidden'); }
   function hideLogin() { document.querySelector('#account-gate')?.classList.add('hidden'); }
@@ -126,7 +141,7 @@
   function scheduleSave() { clearTimeout(account.saveTimer); account.queued = true; account.saveTimer = setTimeout(flushSave, 1800); }
   async function uploadLocalMigration() { const session = account.session || readSession(); if (!session || session.guest) { setAccountMessage('먼저 Google·Apple·이메일 계정을 연결하세요.'); return; } if (!hasProgressApi()) { setAccountMessage('클라우드 서버가 아직 연결되지 않았습니다. 로컬 데이터는 안전하게 유지됩니다.'); return; } account.queued = true; await flushSave(); setAccountMessage('기존 기기 진행 데이터를 계정에 저장했습니다.'); }
   function setAccountMessage(message) { const node = document.querySelector('#account-message'); if (node) node.textContent = message; }
-  async function logout() { const client = await initSupabase(); if (client) await client.auth.signOut(); localStorage.removeItem(SESSION_KEY); account.session = null; showLogin(); renderAccount(); }
+  async function logout() { const client = await initSupabase(); if (client) await client.auth.signOut(); localStorage.removeItem(SESSION_KEY); localStorage.setItem(EXPLICIT_LOGOUT_KEY, '1'); account.session = null; showLogin(); renderAccount(); }
   function renderAccount() {
     const screen = document.querySelector('#account'), session = account.session || readSession(), profile = profileData(); if (!screen) return;
     const cloud = session?.guest ? '기기 저장 · 계정 연결 가능' : hasProgressApi() ? '클라우드 동기화 사용' : '클라우드 서버 연결 대기';
@@ -146,6 +161,7 @@
   }
   async function initialize() {
     injectUi(); account.session = readSession();
+    if (!account.session) { const recovered = recoverGuestSession(); if (recovered) writeSession(recovered); }
     const formal = await formalSession(); if (formal) await adoptFormalSession(formal);
     if (!account.session) showLogin(); else { hideLogin(); saveIndicator(account.session.guest ? 'guest' : hasProgressApi() ? 'pending' : 'pending'); }
     account.lastHash = snapshotHash(captureSnapshot()); renderAccount();

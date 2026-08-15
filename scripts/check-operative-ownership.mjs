@@ -9,6 +9,8 @@ const required=[
   ['강화 후 영구 소유 유지',/operativeOwned\[id\]=true;operativeRoster\[id\]=Math\.max\(0,/],
   ['목록 영구 소유 판정',/owned=operativeIsOwned\(id\)/],
   ['선택 시 영구 소유 확인',/if\(!operativeIsOwned\(id\)\)return;selectedCharacter=id/],
+  ['첫 요원 열쇠 복구 표시',/neonStarterOperativeKeyRepairV2/],
+  ['누락된 첫 요원 열쇠 복구',/if\(operativeCrateKeys<=0&&!hasUnlockedOperative\)\{\s*operativeCrateKeys=1;/],
 ];
 
 const failed=required.filter(([,pattern])=>!pattern.test(source));

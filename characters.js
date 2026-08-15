@@ -14,12 +14,20 @@ const CHARACTER_DATA={
 };
 const OPERATIVE_TIERS={common:'일반',rare:'희귀',hero:'영웅',legend:'전설'};
 let operativeRoster=JSON.parse(localStorage.neonOperativeRoster||'{}'),operativeRanks=JSON.parse(localStorage.neonOperativeRanks||'{}'),operativeOwned=JSON.parse(localStorage.neonOperativeOwned||'{}'),operativeAcquiredOrder=JSON.parse(localStorage.neonOperativeAcquiredOrder||'{}'),operativeClears=Number(localStorage.neonOperativeClears||0),operativeSort=localStorage.neonOperativeSort||'tier-desc';
-const hadOperativeProfile=['neonOperativeRoster','neonOperativeClears','neonOperativeCrateKeys','neonSelectedCharacter'].some(key=>localStorage.getItem(key)!==null);
 let operativeCrateKeys=Number(localStorage.neonOperativeCrateKeys||0),operativeCrateOpening=false,operativeKeysThisRun=0;
 if(localStorage.getItem('neonStarterOperativeKey')===null){
-  if(!hadOperativeProfile)operativeCrateKeys++;
+  /* 이전 빌드가 빈 프로필을 먼저 만들었더라도 최초 지급 열쇠는 반드시 보장한다. */
+  operativeCrateKeys++;
   localStorage.neonStarterOperativeKey='1';
   localStorage.neonOperativeCrateKeys=String(operativeCrateKeys);
+}
+if(localStorage.getItem('neonStarterOperativeKeyRepairV2')===null){
+  const hasUnlockedOperative=Object.values(operativeOwned).some(Boolean)||Object.values(operativeRoster).some(value=>Number(value)>0)||Object.keys(operativeRanks).length>0||Object.keys(operativeAcquiredOrder).length>0;
+  if(operativeCrateKeys<=0&&!hasUnlockedOperative){
+    operativeCrateKeys=1;
+    localStorage.neonOperativeCrateKeys='1';
+  }
+  localStorage.neonStarterOperativeKeyRepairV2='1';
 }
 let selectedCharacter=localStorage.neonSelectedCharacter||'recruit';
 // roster는 강화에 쓰는 중복 요원 수량이고 owned는 한 번 획득한 요원의 영구 소유권이다.
