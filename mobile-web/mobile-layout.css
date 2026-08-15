@@ -137,7 +137,16 @@
   html.native-mobile #menu .account-level-widget{left:var(--safe-l);top:calc(var(--safe-t) + 43px);min-width:128px;max-width:148px;padding:4px 6px}
   html.native-mobile #menu .account-level-widget>span:last-child{min-width:88px}
   html.native-mobile #settings-button{right:var(--safe-r);top:var(--safe-t)}
-  html.native-mobile #quest-button{right:var(--safe-r);top:calc(var(--safe-t) + 45px);width:42px;height:42px}
+  html.native-mobile #quest-button{
+    right:calc(var(--safe-r) + 8px);
+    top:calc(var(--safe-t) + 45px);
+    width:38px;
+    height:38px;
+    box-sizing:border-box;
+    transform:none!important;
+  }
+  html.native-mobile #quest-button:hover,
+  html.native-mobile #quest-button:active{transform:none!important}
   html.native-mobile #menu.home .lobby-news{right:calc(var(--safe-r) + 55px);top:25%;width:155px}
   html.native-mobile #menu.home .lobby-tools{left:var(--safe-l);top:auto;bottom:calc(var(--safe-b) + 58px)}
   html.native-mobile #menu.home .lobby-record-card{top:34%;width:118px}
@@ -158,6 +167,103 @@
   html.native-mobile .overdrive-button{right:var(--safe-r);bottom:calc(var(--safe-b) + 116px);min-width:100px;max-width:145px}
   html.native-mobile .variety-fusion-hud{right:var(--safe-r);top:48px;max-width:175px}
   html.native-mobile .cloud-save-indicator{right:calc(var(--native-frame-right) + 8px);bottom:calc(var(--native-frame-bottom) + 7px)}
+
+  /* Supply cards must stay centred inside the camera-safe frame. */
+  html.native-mobile .crate-screen .shop-actions{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(118px,170px));
+    justify-content:center!important;
+    justify-items:stretch;
+    width:min(540px,var(--phone-content-w))!important;
+    margin:7px auto!important;
+  }
+  html.native-mobile .crate-screen .shop-actions>button{
+    min-width:0!important;
+    width:100%;
+    min-height:98px!important;
+    padding:7px 8px!important;
+    line-height:1.2;
+  }
+  html.native-mobile .crate-screen .shop-actions>button strong,
+  html.native-mobile .crate-screen .shop-actions>button>small{line-height:1.25}
+  html.native-mobile .crate-screen>p:not(.label){
+    width:min(520px,calc(var(--phone-content-w) - 74px));
+    line-height:1.35;
+  }
+  html.native-mobile .crate-screen .probability{line-height:1.35}
+
+  /* Keep the operative header on-screen; only the roster scrolls. */
+  html.native-mobile .character-screen{
+    overflow:hidden!important;
+    padding:calc(var(--safe-t) + 4px) calc(var(--safe-r) + 5px) calc(var(--safe-b) + 5px) calc(var(--safe-l) + 5px)!important;
+  }
+  html.native-mobile .character-screen>.label,
+  html.native-mobile .character-screen>h2,
+  html.native-mobile .character-screen>p,
+  html.native-mobile .character-screen>.character-heading,
+  html.native-mobile .character-screen>.anime-event-banner{
+    flex:0 0 auto!important;
+  }
+  html.native-mobile .character-screen>p:not(.label){
+    width:min(610px,calc(var(--phone-content-w) - 76px));
+    margin:2px auto!important;
+    line-height:1.3;
+  }
+  html.native-mobile .character-screen .character-heading{
+    width:min(650px,calc(var(--phone-content-w) - 76px));
+    min-height:22px;
+    margin:2px auto!important;
+  }
+  html.native-mobile .character-screen .character-list{
+    flex:1 1 auto!important;
+    width:min(680px,calc(var(--phone-content-w) - 12px))!important;
+    height:auto!important;
+    min-height:135px!important;
+    max-height:none!important;
+    margin:3px auto 0!important;
+    padding:4px 8px 34px!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-y!important;
+    scrollbar-gutter:stable both-edges;
+    align-content:flex-start;
+  }
+  html.native-mobile .character-screen .character-card{
+    display:flex;
+    flex-direction:column;
+    width:126px;
+    min-height:224px;
+    height:auto;
+    box-sizing:border-box;
+    padding:7px;
+  }
+  html.native-mobile .character-screen .character-card .character-skills{
+    flex:1 0 auto;
+    line-height:1.45;
+    overflow:visible;
+  }
+  html.native-mobile .character-screen .character-card button{
+    flex:0 0 auto;
+    min-height:23px;
+    padding:4px 3px;
+    line-height:1.25;
+  }
+  html.native-mobile .character-screen .anime-event-banner{
+    width:min(650px,calc(var(--phone-content-w) - 76px));
+    max-height:34px;
+    overflow:hidden;
+  }
+
+  /* Buttons with two-line Korean labels reserve enough room for the caption. */
+  html.native-mobile .quest-card button,
+  html.native-mobile .mode-card button,
+  html.native-mobile .facility-card button{
+    min-height:24px;
+    line-height:1.25;
+    white-space:normal;
+  }
 
   /* Long labels and button captions remain readable inside narrow cells. */
   html.native-mobile button,

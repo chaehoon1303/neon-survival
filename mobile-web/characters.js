@@ -29,6 +29,17 @@ if(localStorage.getItem('neonStarterOperativeKeyRepairV2')===null){
   }
   localStorage.neonStarterOperativeKeyRepairV2='1';
 }
+/*
+ * V2 이전에 빈/오래된 요원 기록 때문에 복구가 건너뛰어진 저장 데이터가 있다.
+ * 현재 열쇠가 0개인 기존 계정에는 보상 열쇠를 한 번만 보장한다.
+ */
+if(localStorage.getItem('neonStarterOperativeKeyRepairV3')===null){
+  if(operativeCrateKeys<=0){
+    operativeCrateKeys=1;
+    localStorage.neonOperativeCrateKeys='1';
+  }
+  localStorage.neonStarterOperativeKeyRepairV3='1';
+}
 let selectedCharacter=localStorage.neonSelectedCharacter||'recruit';
 // roster는 강화에 쓰는 중복 요원 수량이고 owned는 한 번 획득한 요원의 영구 소유권이다.
 // 이전 버전에서 강화 후 roster가 0이 되어 잠긴 요원은 강화 단계/획득 기록으로 자동 복구한다.

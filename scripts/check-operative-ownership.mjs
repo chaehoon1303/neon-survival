@@ -11,6 +11,7 @@ const required=[
   ['선택 시 영구 소유 확인',/if\(!operativeIsOwned\(id\)\)return;selectedCharacter=id/],
   ['첫 요원 열쇠 복구 표시',/neonStarterOperativeKeyRepairV2/],
   ['누락된 첫 요원 열쇠 복구',/if\(operativeCrateKeys<=0&&!hasUnlockedOperative\)\{\s*operativeCrateKeys=1;/],
+  ['V2 누락 계정 1회 보상',/neonStarterOperativeKeyRepairV3[\s\S]*?if\(operativeCrateKeys<=0\)\{\s*operativeCrateKeys=1;/],
 ];
 
 const failed=required.filter(([,pattern])=>!pattern.test(source));
