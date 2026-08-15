@@ -1,8 +1,12 @@
 (()=>{
   let orientationPlugin=null;
   const isPhoneOrTablet=()=>window.Capacitor?.isNativePlatform?.()||/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const nativePlatform=window.Capacitor?.getPlatform?.()||'web';
   // 데스크톱 창이 세로로 길어져도 회전 안내를 띄우지 않는다.
   document.documentElement.classList.toggle('mobile-viewport',isPhoneOrTablet());
+  document.documentElement.classList.toggle('native-mobile',nativePlatform==='ios'||nativePlatform==='android');
+  document.documentElement.classList.toggle('native-ios',nativePlatform==='ios');
+  document.documentElement.classList.toggle('native-android',nativePlatform==='android');
   async function lockLandscape(){
     try{
       if(window.Capacitor?.isNativePlatform?.()){

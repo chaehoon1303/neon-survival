@@ -1,8 +1,8 @@
 // 전투 모드: 정복은 기존 맵 규칙, 무한/보스 러시는 별도 전투 규칙을 사용한다.
 const gameModes = [
-  { id: 'conquest', icon: '⚔', name: '정복 모드', detail: '맵을 하나씩 정복해 최후의 신전에 도전합니다.' },
-  { id: 'endless', icon: '∞', name: '무한 모드', detail: '끝없이 강해지는 적 속에서 생존 시간을 겨룹니다.' },
-  { id: 'bossrush', icon: '👑', name: '보스 러시', detail: '보스를 연속 격파하고 대량 경험치를 획득합니다.' }
+  { id: 'conquest', icon: 'icon-battle', name: '정복 모드', detail: '맵을 하나씩 정복해 최후의 신전에 도전합니다.' },
+  { id: 'endless', icon: 'icon-endless', name: '무한 모드', detail: '끝없이 강해지는 적 속에서 생존 시간을 겨룹니다.' },
+  { id: 'bossrush', icon: 'icon-crown', name: '보스 러시', detail: '보스를 연속 격파하고 대량 경험치를 획득합니다.' }
 ];
 
 let selectedMode = localStorage.neonMode || 'conquest';
@@ -20,10 +20,13 @@ const bossRushNames = [
 function renderModes() {
   const list = $('#mode-list'), play = $('#mode-play');
   if (!list || !play) return;
+  // `온라인 협동`이 마지막 스크립트에서 등록되기 전에 이전 선택값이 먼저
+  // 복원되어도 모드 화면 전체가 중단되지 않도록 안전한 표시값을 사용한다.
+  const displayMode = gameModes.find(mode => mode.id === selectedMode) || gameModes[0];
   list.innerHTML = gameModes.map(mode => `<button class="mode-card ${mode.id === selectedMode ? 'selected' : ''}" data-mode="${mode.id}">
-    <span>${mode.icon}</span><b>${mode.name}</b><small>${mode.detail}</small>${mode.id === selectedMode ? '<em>선택됨</em>' : ''}
+    <span><i class="game-icon ${mode.icon}" aria-hidden="true"></i></span><b>${mode.name}</b><small>${mode.detail}</small>${mode.id === selectedMode ? '<em>선택됨</em>' : ''}
   </button>`).join('');
-  play.textContent = `${gameModes.find(mode => mode.id === selectedMode).name} 플레이`;
+  play.textContent = `${displayMode.name} 플레이`;
   list.querySelectorAll('[data-mode]').forEach(button => button.onclick = () => {
     selectedMode = button.dataset.mode;
     localStorage.neonMode = selectedMode;
@@ -57,7 +60,7 @@ function spawnBossRushBoss() {
   enemies.push(e);
   boss = e;
   bossRushBoss = e;
-  pop(`👑 BOSS ${wave + 1} · ${e.name}`);
+  pop(`BOSS ${wave + 1} · ${e.name}`);
 }
 
 function beginSelectedMode() {
@@ -85,8 +88,8 @@ function beginSelectedMode() {
     bossRushWave = 0;
     bossRushBoss = null;
     bossRushDelay = .7;
-    ui.map.textContent = '👑 보스 러시';
-    pop('👑 보스 러시 시작! 보스를 쓰러뜨리면 대량 경험치를 얻습니다.');
+    ui.map.textContent = '보스 러시';
+    pop('보스 러시 시작! 보스를 쓰러뜨리면 대량 경험치를 얻습니다.');
   }
 }
 
@@ -137,8 +140,8 @@ update = function (dt) {
     ui.stageLabel.textContent = `∞ WAVE ${stage + 1} · 위협도 x${stageThreat.toFixed(1)}`;
     ui.stageText.textContent = `${stageKills} / ${Math.floor(12 + stage * 5)} 처치`;
   } else if (activeMode === 'bossrush') {
-    ui.map.textContent = '👑 보스 러시 전장';
-    ui.stageLabel.textContent = `👑 BOSS RUSH · WAVE ${bossRushWave + 1}`;
+    ui.map.textContent = '보스 러시 전장';
+    ui.stageLabel.textContent = `BOSS RUSH · WAVE ${bossRushWave + 1}`;
     ui.stageText.textContent = bossRushBoss ? `BOSS HP ${Math.max(0, Math.ceil(bossRushBoss.hp))}` : '다음 보스 준비 중';
   }
 };

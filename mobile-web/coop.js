@@ -113,13 +113,18 @@
       // 현재 서버는 방·준비 상태를 권한 있게 판정한다. 실제 적/드롭 동기화가
       // 추가되기 전까지는 같은 작전을 각 클라이언트에서 즉시 시작한다.
       activeMode = 'conquest';
-      tryBegin();
-      if (run) {
+      const startCoopBattle = () => {
+        tryBegin();
+        if (!run) return;
         const spawn = message.spawn || { x: 640, y: 360 };
         player.x = spawn.x; player.y = spawn.y;
         coop.battle.active = true; coop.battle.matchId = message.matchId || ''; coop.battle.hostId = message.hostId || message.players[0]?.id || ''; coop.battle.isHost = coop.battle.hostId === playerCard().id; coop.battle.spawn = spawn; coop.battle.remote.clear(); coop.battle.remoteEnemies.clear(); coop.battle.nextSend = 0; coop.battle.nextEnemySend = 0; coop.battle.dead = false; coop.battle.abandoned = false;
         pop(`NEON SQUAD · ${message.players.length}명 작전 시작!`);
-      }
+      };
+      // 작전 UX가 로드된 빌드에서는 팀 전원이 같은 3·2·1 출격 흐름을
+      // 거친다. 이전 빌드와 서버 프로토콜은 기존 즉시 시작으로 호환한다.
+      if (typeof operationQueueCoopDeploy === 'function') operationQueueCoopDeploy(message, startCoopBattle);
+      else startCoopBattle();
     }
   }
   function createRoom() {
@@ -209,7 +214,7 @@
     battle.active = false; battle.dead = false; hideDeathScreen(); return baseEnd.apply(this, arguments);
   };
   function installModeCard() {
-    if (!gameModes.some(mode => mode.id === 'coop')) gameModes.push({ id: 'coop', icon: '♧', name: '온라인 협동', detail: '방 코드로 최대 5명까지 파티를 구성합니다.' });
+    if (!gameModes.some(mode => mode.id === 'coop')) gameModes.push({ id: 'coop', icon: 'icon-operative', name: '온라인 협동', detail: '방 코드로 최대 5명까지 파티를 구성합니다.' });
     const baseRender = renderModes; renderModes = function () { const result = baseRender.apply(this, arguments); const play = document.querySelector('#mode-play'); if (selectedMode === 'coop' && play) play.textContent = '온라인 협동 파티 로비'; return result; };
     const originalPlay = document.querySelector('#mode-play')?.onclick;
     document.querySelector('#mode-play').onclick = function () { if (selectedMode === 'coop') { openLobby(); return; } originalPlay?.apply(this, arguments); };

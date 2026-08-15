@@ -1,0 +1,88 @@
+/*
+ * Lightweight game UI glyphs.
+ * These intentionally use simple one-colour silhouettes so buttons stay crisp
+ * on small phones without turning the interface into a high-detail art sheet.
+ */
+.game-icon{
+  --game-glyph:var(--glyph-generic);
+  display:inline-block;
+  width:1.08em;
+  height:1.08em;
+  flex:0 0 auto;
+  color:inherit;
+  background:currentColor;
+  -webkit-mask-image:var(--game-glyph);
+  mask-image:var(--game-glyph);
+  -webkit-mask-position:center;
+  mask-position:center;
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  -webkit-mask-size:contain;
+  mask-size:contain;
+  vertical-align:-.13em;
+  filter:drop-shadow(0 0 5px currentColor);
+}
+.game-icon.icon-settings{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M10.3 2h3.4l.6 2.3 2 .8 2-1.2 2.4 2.4-1.2 2 .8 2 2.3.6v3.4l-2.3.6-.8 2 1.2 2-2.4 2.4-2-1.2-2 .8-.6 2.3h-3.4L9.7 20l-2-.8-2 1.2L3.3 18l1.2-2-.8-2-2.3-.6V10l2.3-.6.8-2-1.2-2L5.7 3l2 1.2 2-.8L10.3 2Zm1.7 6.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z'/%3E%3C/svg%3E")}
+.game-icon.icon-home{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='m3 11 9-8 9 8v10h-6v-6H9v6H3V11Zm4 1v5h2v-4h6v4h2v-5l-5-4.4L7 12Z'/%3E%3C/svg%3E")}
+.game-icon.icon-bag{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M7 7V5a5 5 0 0 1 10 0v2h3l1 14H3L4 7h3Zm3 0h4V5a2 2 0 0 0-4 0v2Zm-3 5v2h10v-2H7Z'/%3E%3C/svg%3E")}
+.game-icon.icon-battle,.game-icon.icon-sword{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='m4 2 7 7-2 2-2-2-2 2 2 2-3 3-2-2 3-3-2-2 2-2-3-3 2-2Zm16 0 2 2-7 7 3 3 2-2 2 2-4 4 2 2-2 2-6-6 2-2-1-1 2-2 5-9Z'/%3E%3C/svg%3E")}
+.game-icon.icon-crate{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M3 4h18v4h-1v13H4V8H3V4Zm4 5v9h10V9H7Zm2 2h6v2H9v-2Zm0 4h6v2H9v-2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-target{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11 2h2v3.1a7 7 0 0 1 5.9 5.9H22v2h-3.1a7 7 0 0 1-5.9 5.9V22h-2v-3.1A7 7 0 0 1 5.1 13H2v-2h3.1A7 7 0 0 1 11 5.1V2Zm1 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0 2.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z'/%3E%3C/svg%3E")}
+.game-icon.icon-quest{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M5 2h14v20l-3-2-4 2-4-2-3 2V2Zm3 5v2h8V7H8Zm0 4v2h8v-2H8Zm0 4v2h5v-2H8Z'/%3E%3C/svg%3E")}
+.game-icon.icon-coin{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 3a7 7 0 1 1 0 14 7 7 0 0 1 0-14Zm-1 2v2H9v2h2v2H9v2h2v2h2v-2h2v-2h-2v-2h2V9h-2V7h-2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-key{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M14 3a7 7 0 0 0-6.6 9.3L2 17.7V22h4.3l1.4-1.4h2v-2h2v-2l.3-.3A7 7 0 1 0 14 3Zm0 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z'/%3E%3C/svg%3E")}
+.game-icon.icon-shield,.game-icon.icon-armor{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M12 2 21 6v6c0 5.6-3.8 9-9 10-5.2-1-9-4.4-9-10V6l9-4Zm0 4.1L7 8.3V12c0 3.1 1.8 5.1 5 6 3.2-.9 5-2.9 5-6V8.3l-5-2.2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-warning{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M12 2 23 21H1L12 2Zm-1 6v7h2V8h-2Zm0 9v2h2v-2h-2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-hammer,.game-icon.icon-workshop{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='m3 3 7 1 2 2-3 3 12 12-3 3L6 12l-3 3-2-2 2-10Zm12 0 6 6-2 2-2-2-5 5-2-2 5-5-2-2 2-2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-operative{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='m12 2 8 4v7c0 5-3.4 8.2-8 9-4.6-.8-8-4-8-9V6l8-4Zm0 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 9.5V18h10v-2.5c-1.4-1.3-3.1-2-5-2s-3.6.7-5 2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-gloves{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M7 2h3v7h1V1h3v8h1V2h3v8h1V5h3v9c0 5-3 8-8 8h-2c-5 0-8-3-8-8V8H2V5h5v8h1V2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-shoes{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M4 3h7c0 5 1 8 4 10l6 3v5H5c-3 0-4-2-3-5l2-5V3Zm3 2v7l-2 5h12l-4-2c-3-2-5-5-6-10Z'/%3E%3C/svg%3E")}
+.game-icon.icon-belt{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M2 7h20v10H2V7Zm3 3v4h5v-1H8v-2h2v-1H5Zm7-1v6h6V9h-6Zm2 2h2v2h-2v-2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-necklace{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M4 2h3c0 5 1.5 8 5 10 3.5-2 5-5 5-10h3c0 6-2.2 10.2-6.2 12.8L17 18l-5 5-5-5 3.2-3.2C6.2 12.2 4 8 4 2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-head{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M12 2a8 8 0 0 0-8 8v7h4v-5h8v5h4v-7a8 8 0 0 0-8-8Zm-5 8a5 5 0 0 1 10 0H7Zm2 4v8h6v-8H9Z'/%3E%3C/svg%3E")}
+.game-icon.icon-medical{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 2h6v7h7v6h-7v7H9v-7H2V9h7V2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-engine{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='m14 1-2 8h7L8 23l2-9H4L14 1Z'/%3E%3C/svg%3E")}
+.game-icon.icon-relay{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11 13h2v9h-2v-9Zm1-4a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM7 6l2 2a6 6 0 0 0 0 8l-2 2A9 9 0 0 1 7 6Zm10 0a9 9 0 0 1 0 12l-2-2a6 6 0 0 0 0-8l2-2ZM4 3l2 2a10 10 0 0 0 0 14l-2 2A13 13 0 0 1 4 3Zm16 0a13 13 0 0 1 0 18l-2-2a10 10 0 0 0 0-14l2-2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-book{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M3 3h7c2 0 2 2 2 2s0-2 2-2h7v17h-7c-2 0-2 2-2 2s0-2-2-2H3V3Zm3 3v11h4V6H6Zm8 0v11h4V6h-4Z'/%3E%3C/svg%3E")}
+.game-icon.icon-magnet{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M3 3h7v7H7v4a5 5 0 0 0 10 0v-4h-3V3h7v11a9 9 0 0 1-18 0V3Zm3 3v2h2V6H6Zm11 0v2h2V6h-2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-reactor{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M8 2h8v3h3v17H5V5h3V2Zm2 3h4V4h-4v1Zm2 3-4 7h3v5l5-8h-3l2-4h-3Z'/%3E%3C/svg%3E")}
+.game-icon.icon-lock{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M6 10V7a6 6 0 0 1 12 0v3h3v12H3V10h3Zm4 0h4V7a2 2 0 0 0-4 0v3Zm1 4v4h2v-4h-2Z'/%3E%3C/svg%3E")}
+.game-icon.icon-crown{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='m2 6 5 4 5-7 5 7 5-4-3 13H5L2 6Zm5 9h10l1-5-3 3-3-5-3 5-3-3 1 5Zm-2 6v-2h14v2H5Z'/%3E%3C/svg%3E")}
+.game-icon.icon-endless{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M7 7c2.2 0 3.7 1.5 5 3.2C13.3 8.5 14.8 7 17 7a5 5 0 0 1 0 10c-2.2 0-3.7-1.5-5-3.2C10.7 15.5 9.2 17 7 17A5 5 0 0 1 7 7Zm0 3a2 2 0 1 0 0 4c1.1 0 2.1-1 3-2-1-1-1.9-2-3-2Zm10 0c-1.1 0-2.1 1-3 2 1 1 1.9 2 3 2a2 2 0 1 0 0-4Z'/%3E%3C/svg%3E")}
+.game-icon.icon-power{--game-glyph:var(--glyph-generic)}
+.game-icon.icon-heart{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M12 21S3 16 3 9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 7-9 12-9 12Z'/%3E%3C/svg%3E")}
+.game-icon.icon-anvil{--game-glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M2 4h20v5h-6c0 3-2 5-5 5H8v3h7l2 5H5l2-5v-4c-3-1-5-3-5-6V4Z'/%3E%3C/svg%3E")}
+.game-icon.icon-generic{--game-glyph:var(--glyph-generic)}
+:root{--glyph-generic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7Z'/%3E%3C/svg%3E")}
+
+.mode-tabs>button>.game-icon{width:24px;height:24px;color:#d9f8ff}
+.mode-tabs>button.battle-tab>.game-icon{color:#15253b;filter:none}
+.icon-button>.game-icon,.quest-button>.game-icon{width:21px;height:21px}
+.coin-wallet .game-icon{width:14px;height:14px}
+.coin-wallet .icon-coin{color:#ffd052}.coin-wallet .icon-key{color:#78eaff}
+.route-options b,.equipment-actions button,.shop-actions button{display:flex;align-items:center;justify-content:center;gap:6px}
+.route-options .icon-shield{color:#63ecff}.route-options .icon-warning{color:#ffbd58}
+.equipment-actions .game-icon,.shop-actions .game-icon{width:18px;height:18px}
+.facility-icon .game-icon,.base-icon .game-icon{width:28px;height:28px;color:#78efff}
+.base-project.done .base-icon .game-icon{color:#8dfbd2}
+.mode-card>span .game-icon{width:30px;height:30px;color:#83efff}
+.mode-card[data-mode='bossrush']>span .game-icon{color:#ffd15e}
+.lobby-tools button>.game-icon{width:21px;height:21px;color:#73eaff}
+.crate-art .game-icon,.opening-crate .game-icon{position:relative;z-index:3;color:#efffff}
+.crate-art .game-icon{width:20px;height:20px}.opening-crate .game-icon{width:38px;height:38px}
+.inline-resource{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.inline-resource .game-icon{width:1em;height:1em}
+.simple-item-glyph{display:grid;place-items:center;width:34px;height:34px;border:1px solid #4fcfe8;border-radius:8px;background:linear-gradient(145deg,#153552,#071527);color:#7ceeff;box-shadow:inset 0 0 12px #55eaff22}
+.simple-item-glyph .game-icon{width:22px;height:22px}
+.blacksmith-scene .forge-smith{position:relative;width:34px;height:42px;border-radius:18px 18px 10px 10px;background:linear-gradient(#d7edf4 0 30%,#34506c 31% 100%);box-shadow:0 0 13px #7ceaff44}
+.blacksmith-scene .forge-smith::before{content:'';position:absolute;left:7px;right:7px;top:9px;height:4px;border-radius:4px;background:#172436}
+.blacksmith-scene .forge-flame{width:28px;height:34px;color:#ff9e35;animation:forge-simple-flame .8s ease-in-out infinite alternate}
+.blacksmith-scene .forge-anvil{width:36px;height:36px;color:#b9d9ec}
+@keyframes forge-simple-flame{to{transform:translateY(-3px) scale(.92);filter:drop-shadow(0 0 10px #ff7028)}}
+
+@media (max-height:500px) and (orientation:landscape){
+  .mode-tabs>button>.game-icon{width:19px;height:19px}
+  .facility-icon .game-icon,.base-icon .game-icon{width:20px;height:20px}
+  .mode-card>span .game-icon{width:22px;height:22px}
+  .simple-item-glyph{width:26px;height:26px}.simple-item-glyph .game-icon{width:17px;height:17px}
+}

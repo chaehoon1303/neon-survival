@@ -1,0 +1,199 @@
+/*
+ * Final phone layout layer.
+ * Capacitor keeps the camera island outside #game-shell; every rule below must
+ * therefore size itself from that shell instead of the device-wide viewport.
+ */
+@media (max-height:500px) and (orientation:landscape){
+  /* Vertical gutters are intentionally smaller than the 52px camera gutters. */
+  html.native-ios{
+    --native-frame-top:max(12px,env(safe-area-inset-top));
+    --native-frame-bottom:max(12px,env(safe-area-inset-bottom));
+  }
+  html.native-mobile #game-shell{
+    --phone-content-w:calc(100% - var(--safe-l) - var(--safe-r));
+    --phone-content-h:calc(100% - var(--safe-t) - var(--safe-b));
+  }
+
+  /* Device-wide vw made late-added screens wider than the native safe frame. */
+  html.native-mobile .screen,
+  html.native-mobile .modal-screen,
+  html.native-mobile .lobby-modal,
+  html.native-mobile .longplay-modal,
+  html.native-mobile .account-screen,
+  html.native-mobile .coop-lobby{
+    width:100%;
+    height:100%;
+    max-width:100%;
+    max-height:100%;
+    min-width:0;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-y!important;
+    scroll-padding-block:14px 24px;
+    padding-bottom:calc(var(--safe-b) + 22px)!important;
+  }
+  /* A flex:1 child consumed the viewport without increasing scrollHeight. */
+  html.native-mobile .modal-screen>*:not(.close),
+  html.native-mobile .lobby-modal>*:not(.close),
+  html.native-mobile .longplay-modal>*:not(.close),
+  html.native-mobile .account-screen>*:not(.close),
+  html.native-mobile .coop-lobby>*:not(.close){
+    flex:0 0 auto!important;
+  }
+  html.native-mobile .screen>*:not(.close),
+  html.native-mobile .modal-screen>*:not(.close){
+    min-width:0;
+    max-width:var(--phone-content-w);
+  }
+  html.native-mobile .mode-list,
+  html.native-mobile .quest-list,
+  html.native-mobile .base-upgrades,
+  html.native-mobile .base-projects,
+  html.native-mobile .character-list,
+  html.native-mobile .inventory,
+  html.native-mobile .forge-list,
+  html.native-mobile .shop-actions,
+  html.native-mobile .probability,
+  html.native-mobile .codex-tabs,
+  html.native-mobile .codex-list,
+  html.native-mobile .record-grid,
+  html.native-mobile .achievement-list,
+  html.native-mobile .attendance-list,
+  html.native-mobile .longplay-list,
+  html.native-mobile .bounty-grades,
+  html.native-mobile .season-map,
+  html.native-mobile .coop-code,
+  html.native-mobile .coop-party,
+  html.native-mobile .coop-balance,
+  html.native-mobile .account-profile,
+  html.native-mobile .account-details,
+  html.native-mobile .account-migration,
+  html.native-mobile .account-xp-panel,
+  html.native-mobile .account-next-reward,
+  html.native-mobile .account-track-title,
+  html.native-mobile .account-level-track,
+  html.native-mobile .account-perks,
+  html.native-mobile .fusion-codex,
+  html.native-mobile #arsenal-crate-controls,
+  html.native-mobile .crate-results{
+    width:var(--phone-content-w)!important;
+    max-width:var(--phone-content-w)!important;
+  }
+  /* Use one predictable outer scroll instead of several short nested scrollers. */
+  html.native-mobile .mode-list,
+  html.native-mobile .quest-list,
+  html.native-mobile .base-upgrades,
+  html.native-mobile .base-projects,
+  html.native-mobile .character-list,
+  html.native-mobile .inventory,
+  html.native-mobile .forge-list,
+  html.native-mobile .codex-list,
+  html.native-mobile .record-grid,
+  html.native-mobile .achievement-list,
+  html.native-mobile .attendance-list,
+  html.native-mobile .longplay-list,
+  html.native-mobile .bounty-grades,
+  html.native-mobile .season-map,
+  html.native-mobile .coop-party,
+  html.native-mobile .account-level-track,
+  html.native-mobile .crate-results{
+    flex:none!important;
+    height:auto!important;
+    min-height:min-content;
+    max-height:none!important;
+    overflow:visible!important;
+    touch-action:pan-y!important;
+  }
+
+  /* Responsive grids shrink their columns before they can cover neighbours. */
+  html.native-mobile .mode-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  html.native-mobile .quest-list{grid-template-columns:repeat(5,minmax(0,1fr))}
+  html.native-mobile .base-upgrades{grid-template-columns:repeat(4,minmax(0,1fr))}
+  html.native-mobile .base-projects{grid-template-columns:repeat(3,minmax(0,1fr))}
+  html.native-mobile .codex-list{grid-template-columns:repeat(5,minmax(0,1fr))}
+  html.native-mobile .record-grid,
+  html.native-mobile .achievement-list{grid-template-columns:repeat(4,minmax(0,1fr))}
+  html.native-mobile .attendance-list{grid-template-columns:repeat(7,minmax(0,1fr))}
+  html.native-mobile .coop-party{grid-template-columns:repeat(5,minmax(0,1fr))}
+  html.native-mobile .coop-balance>div{grid-template-columns:repeat(4,minmax(0,1fr))}
+  html.native-mobile .account-details{grid-template-columns:repeat(3,minmax(0,1fr))}
+  html.native-mobile .account-level-track{grid-template-columns:repeat(5,minmax(0,1fr))}
+  html.native-mobile .crate-results{grid-template-columns:repeat(5,minmax(0,1fr))}
+  html.native-mobile .mode-card,
+  html.native-mobile .quest-card,
+  html.native-mobile .facility-card,
+  html.native-mobile .base-project,
+  html.native-mobile .codex-entry,
+  html.native-mobile .achievement-list article,
+  html.native-mobile .attendance-list article,
+  html.native-mobile .coop-member,
+  html.native-mobile .account-details span,
+  html.native-mobile .crate-results .loot-texture{min-width:0!important;overflow:hidden}
+
+  /* Home buttons occupy separate rails: level/wallet left, settings/quest right. */
+  html.native-mobile #menu .coin-wallet{left:var(--safe-l);top:var(--safe-t);max-width:150px}
+  html.native-mobile #menu .account-level-widget{left:var(--safe-l);top:calc(var(--safe-t) + 43px);min-width:128px;max-width:148px;padding:4px 6px}
+  html.native-mobile #menu .account-level-widget>span:last-child{min-width:88px}
+  html.native-mobile #settings-button{right:var(--safe-r);top:var(--safe-t)}
+  html.native-mobile #quest-button{right:var(--safe-r);top:calc(var(--safe-t) + 45px);width:42px;height:42px}
+  html.native-mobile #menu.home .lobby-news{right:calc(var(--safe-r) + 55px);top:25%;width:155px}
+  html.native-mobile #menu.home .lobby-tools{left:var(--safe-l);top:auto;bottom:calc(var(--safe-b) + 58px)}
+  html.native-mobile #menu.home .lobby-record-card{top:34%;width:118px}
+  html.native-mobile #menu.home .mode-tabs,
+  html.native-mobile #menu:not(.home) .mode-tabs{bottom:calc(var(--safe-b) + 6px)}
+
+  /* Battle selection gets a reserved centre lane between edge controls. */
+  html.native-mobile #menu:not(.home) #battle-select-panel{width:min(610px,var(--phone-content-w));height:292px}
+  html.native-mobile .battle-best-card{right:0;width:84px}
+  html.native-mobile .battle-info-grid{width:min(500px,82%);grid-template-columns:repeat(3,minmax(0,1fr))}
+  html.native-mobile .battle-start{bottom:2px;min-width:170px}
+
+  /* Combat controls never share the lower HUD rails. */
+  html.native-mobile .touch-joystick{left:calc(var(--safe-l) + 55px);bottom:calc(var(--safe-b) + 56px);width:86px;height:86px}
+  html.native-mobile .skill-controls{right:var(--safe-r);bottom:calc(var(--safe-b) + 61px);gap:4px;max-width:208px}
+  html.native-mobile .skill-controls button,
+  html.native-mobile .skill-controls .transcendence{width:44px;height:44px;flex:0 0 44px}
+  html.native-mobile .overdrive-button{right:var(--safe-r);bottom:calc(var(--safe-b) + 116px);min-width:100px;max-width:145px}
+  html.native-mobile .variety-fusion-hud{right:var(--safe-r);top:48px;max-width:175px}
+  html.native-mobile .cloud-save-indicator{right:calc(var(--native-frame-right) + 8px);bottom:calc(var(--native-frame-bottom) + 7px)}
+
+  /* Long labels and button captions remain readable inside narrow cells. */
+  html.native-mobile button,
+  html.native-mobile b,
+  html.native-mobile small,
+  html.native-mobile span,
+  html.native-mobile em,
+  html.native-mobile p,
+  html.native-mobile dd{
+    overflow-wrap:anywhere;
+    word-break:keep-all;
+  }
+  html.native-mobile .gear-detail,
+  html.native-mobile .variety-event,
+  html.native-mobile .coop-death>div,
+  html.native-mobile .account-choice>div{
+    width:min(560px,var(--phone-content-w));
+    max-width:var(--phone-content-w);
+  }
+  html.native-mobile .gear-detail{
+    left:var(--native-frame-left);
+    right:var(--native-frame-right);
+    top:var(--native-frame-top);
+    bottom:var(--native-frame-bottom);
+    width:auto;
+    max-width:none;
+    max-height:none;
+    transform:none;
+    align-content:start;
+    overflow-x:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-y;
+    padding-bottom:24px;
+  }
+  html.native-mobile .gear-detail-close{position:sticky;z-index:3;grid-column:1/-1;justify-self:end;right:auto;top:0}
+  html.native-mobile .gear-detail-actions,
+  html.native-mobile .account-actions{flex-wrap:wrap}
+}

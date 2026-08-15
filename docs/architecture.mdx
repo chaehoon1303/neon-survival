@@ -21,6 +21,7 @@ flowchart LR
   GEAR --> LONG["longplay.js / longplay.css · 숙련도·유물·현상수배·장기 목표"]
   LONG --> COOP["coop.js / coop.css · 5인 파티 로비·서버 프로토콜 기반"]
   COOP --> ACCOUNT_AUTH["account.js / account.css · 게스트·로그인·클라우드 동기화 어댑터"]
+  ACCOUNT_AUTH --> OPERATION["operation-ux.js / operation-ux.css · 준비·출격·보스·결과 연출"]
   COOP --> ROOM_SERVER["server/coop-worker · Durable Object 방 권한 서버"]
   ASSETS["assets/ · 이미지 시트"] --> CORE
   CORE --> STORAGE["localStorage · 영속 데이터"]
@@ -52,6 +53,9 @@ flowchart LR
 | `coop.js`, `coop.css` | 모드 화면의 온라인 협동 카드, 5인 방 코드 파티 UI, 서버가 연결될 때 사용하는 준비·방 상태 메시지 계약과 인원별 밸런스 데이터 |
 | `server/coop-worker/` | Cloudflare Worker + Durable Object. 방 생성·참가·준비·시작 승인과 최대 5명 제한을 판정하는 배포 가능한 협동 로비 서버 |
 | `account.js`, `account.css` | 게스트/정식 계정 UI, localStorage 논리 스냅샷, 자동 저장 대기열, 오프라인 표시, Supabase Auth·권한 있는 저장 API 어댑터 |
+| `operation-ux.js`, `operation-ux.css` | 최종 전투 훅을 보존하며 작전 준비, 출격 점검, 맵 인트로, 보스 프레젠테이션, 실제 보상/XP/숙련도 결과 화면을 연결하는 최종 표현 레이어 |
+| `mobile-layout.css` | 모든 기능 CSS 뒤에 로드되어 iPhone 짧은 가로 화면의 안전 프레임, 버튼 충돌 방지, 모달 줄바꿈을 최종 보정 |
+| `ui-icons.css` | 메인 버튼·재화·장비·시설이 공유하는 가벼운 단색 네온 벡터 실루엣. 운영체제 이모지 모양에 의존하지 않음 |
 | `account-config.js` | 공개 Supabase URL/Publishable Key와 Account API URL만 담는 브라우저 설정. 기본 배포에서는 빈 값이며 비밀은 포함하지 않음 |
 | `mobile-web/` | Capacitor의 `webDir`이 가리키는 배포 스냅샷 |
 | `sw.js` | 웹 배포에서 최신 파일을 우선 요청하고 오프라인 시 캐시를 사용하는 서비스 워커 |
@@ -60,7 +64,7 @@ flowchart LR
 
 ## 중요한 결합 지점
 
-모든 스크립트는 ES 모듈이 아닌 전역 스코프에서 실행된다. `base.js`, `modes.js`, `characters.js`, `variety.js`, `lobby.js`, `battle-select.js`, `player-level.js`, `arsenal.js`는 `begin`, `end`, `spawnEnemy`, `hurt`, `draw` 같은 함수를 저장한 뒤 다시 할당해 기능을 확장한다. 따라서 `index.html`의 로드 순서는 공개 API와 같다. `variety.js`, `lobby.js`, `battle-select.js`, `player-level.js`, `arsenal.js`는 요원 시스템과 화면 회전 처리 이후에 로드되어 기존 전투를 보존한 채 후처리 확장을 적용한다. 무기고 확장은 최종 `weaponAttack`/`levelUp`/상점 함수를 감싸 신규 무기를 분기한다.
+모든 스크립트는 ES 모듈이 아닌 전역 스코프에서 실행된다. `base.js`, `modes.js`, `characters.js`, `variety.js`, `lobby.js`, `battle-select.js`, `player-level.js`, `arsenal.js`는 `begin`, `end`, `spawnEnemy`, `hurt`, `draw` 같은 함수를 저장한 뒤 다시 할당해 기능을 확장한다. 따라서 `index.html`의 로드 순서는 공개 API와 같다. `variety.js`, `lobby.js`, `battle-select.js`, `player-level.js`, `arsenal.js`는 요원 시스템과 화면 회전 처리 이후에 로드되어 기존 전투를 보존한 채 후처리 확장을 적용한다. 무기고 확장은 최종 `weaponAttack`/`levelUp`/상점 함수를 감싸 신규 무기를 분기한다. `operation-ux.js`는 계정과 협동을 포함한 모든 확장이 설치된 다음 마지막으로 로드하며, 최종 `begin`/`tryBegin`/`killEnemy`/`end` 체인을 저장하고 실제 호출 순서를 유지한 채 바깥에 프레젠테이션만 추가한다.
 
 <Warning>
   전역 함수를 이름 변경하거나 시그니처를 바꾸면 뒤 스크립트의 래퍼도 반드시 함께 수정해야 한다.

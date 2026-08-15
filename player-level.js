@@ -70,7 +70,7 @@
     if (level === 100) return { type: 'cosmetic', name: '전설의 네온 엠블럼', detail: 'NEON LEGEND 전용 로비 효과' };
     if (PLAYER_LEVEL_CONFIG.choiceLevels.includes(level)) return { type: 'choice', name: '선택 보급', detail: '세 가지 보상 중 하나 선택' };
     if (level % 5 === 0) return { type: 'crate', name: '장비 보급 상자', detail: '무작위 장비 1개' };
-    return { type: 'coins', amount: 30 + level * 8, name: '보급 코인', detail: '🪙 ' + (30 + level * 8) };
+    return { type: 'coins', amount: 30 + level * 8, name: '보급 코인', detail: (30 + level * 8) + ' 코인' };
   }
   function accountUnlockLevelData(state, level) {
     ACCOUNT_TITLES.filter(function (title) { return title.level <= level && !state.unlockedTitles.includes(title.name); }).forEach(function (title) { state.unlockedTitles.push(title.name); });
@@ -87,9 +87,9 @@
   }
   function accountChoiceOptions(level) {
     return [
-      { id: 'coins', icon: '🪙', name: '보급 코인', detail: '+' + (360 + level * 14), grant: function () { wallet += 360 + level * 14; localStorage.neonCoins = wallet; renderCoins(); return '코인 지급'; } },
-      { id: 'weapon', icon: '⚔', name: '무기 보급', detail: '무작위 무기 1개', grant: function () { var item = rollItem(weapons); inventory.push(item); saveGear(); drawGear(); return item.name + ' 획득'; } },
-      { id: 'operative', icon: '🔑', name: '요원 보급', detail: '요원 열쇠 1개', grant: function () { operativeCrateKeys++; saveOperatives(); renderOperativeKeyCount(); return '요원 열쇠 획득'; } }
+      { id: 'coins', icon: 'icon-coin', name: '보급 코인', detail: '+' + (360 + level * 14), grant: function () { wallet += 360 + level * 14; localStorage.neonCoins = wallet; renderCoins(); return '코인 지급'; } },
+      { id: 'weapon', icon: 'icon-sword', name: '무기 보급', detail: '무작위 무기 1개', grant: function () { var item = rollItem(weapons); inventory.push(item); saveGear(); drawGear(); return item.name + ' 획득'; } },
+      { id: 'operative', icon: 'icon-key', name: '요원 보급', detail: '요원 열쇠 1개', grant: function () { operativeCrateKeys++; saveOperatives(); renderOperativeKeyCount(); return '요원 열쇠 획득'; } }
     ];
   }
   function accountRenderWidget() {
@@ -101,7 +101,7 @@
   function accountRenderEquipment() {
     var target = document.querySelector('#equipment-combat-summary'); if (!target) return;
     var stats = accountCombatStats();
-    target.innerHTML = '<small>현재 장비 종합</small><div><span>⚡<b>전투력</b><em>' + stats.power.toLocaleString() + '</em></span><span>🛡<b>방어력</b><em>' + stats.defense + '</em></span><span>♥<b>체력</b><em>' + stats.hp + '</em></span></div>';
+    target.innerHTML = '<small>현재 장비 종합</small><div><span><i class="game-icon icon-engine"></i><b>전투력</b><em>' + stats.power.toLocaleString() + '</em></span><span><i class="game-icon icon-shield"></i><b>방어력</b><em>' + stats.defense + '</em></span><span><i class="game-icon icon-heart"></i><b>체력</b><em>' + stats.hp + '</em></span></div>';
   }
   function accountRenderModal() {
     var state = accountState(), need = accountNeed(state.level), percent = need ? Math.min(100, state.xp / need * 100) : 100;
@@ -116,13 +116,13 @@
     document.querySelector('#account-next-reward').innerHTML = '<small>NEXT REWARD · LV.' + nextLevel + '</small><b>' + next.name + '</b><span>' + next.detail + '</span>' + (nextMilestone ? '<em>다음 특전 LV.' + nextMilestone.level + ' · ' + nextMilestone.name + '</em>' : '<em>모든 특전 달성</em>');
     track.innerHTML = Array.from({ length: PLAYER_LEVEL_CONFIG.maxLevel }, function (_, index) {
       var level = index + 1, reward = accountReward(level), current = level === state.level, done = level < state.level || state.claimedLevelRewards.includes(level), feature = ACCOUNT_FEATURES.find(function (item) { return item.level === level; }), titleAt = ACCOUNT_TITLES.find(function (item) { return item.level === level; });
-      return '<article class="account-track-card ' + (current ? 'current ' : '') + (done ? 'done ' : '') + (level % 10 === 0 ? 'milestone ' : '') + '"><b>LV.' + level + '</b><span>' + (done ? '✓' : level > state.level ? '🔒' : '●') + '</span><small>' + reward.name + '</small>' + (feature ? '<em>특전 · ' + feature.name + '</em>' : titleAt && level > 1 ? '<em>칭호 · ' + titleAt.name + '</em>' : '') + '</article>';
+      return '<article class="account-track-card ' + (current ? 'current ' : '') + (done ? 'done ' : '') + (level % 10 === 0 ? 'milestone ' : '') + '"><b>LV.' + level + '</b><span>' + (done ? '✓' : level > state.level ? '<i class="game-icon icon-lock" aria-label="잠김"></i>' : '●') + '</span><small>' + reward.name + '</small>' + (feature ? '<em>특전 · ' + feature.name + '</em>' : titleAt && level > 1 ? '<em>칭호 · ' + titleAt.name + '</em>' : '') + '</article>';
     }).join('');
   }
   function accountShowChoice() {
     var state = accountState(), level = state.pendingChoices[0], dialog = document.querySelector('#account-choice'); if (!level || !dialog) return;
     document.querySelector('#account-choice-level').textContent = 'LV. ' + level + ' 선택 보급';
-    document.querySelector('#account-choice-options').innerHTML = accountChoiceOptions(level).map(function (option) { return '<button data-account-choice="' + option.id + '"><i>' + option.icon + '</i><b>' + option.name + '</b><small>' + option.detail + '</small></button>'; }).join('');
+    document.querySelector('#account-choice-options').innerHTML = accountChoiceOptions(level).map(function (option) { return '<button data-account-choice="' + option.id + '"><i><span class="simple-item-glyph"><i class="game-icon ' + option.icon + '"></i></span></i><b>' + option.name + '</b><small>' + option.detail + '</small></button>'; }).join('');
     dialog.classList.remove('hidden');
     dialog.querySelectorAll('[data-account-choice]').forEach(function (button) { button.onclick = function () {
       var fresh = accountState(), choiceLevel = fresh.pendingChoices.shift(), option = accountChoiceOptions(choiceLevel).find(function (entry) { return entry.id === button.dataset.accountChoice; });
